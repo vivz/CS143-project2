@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <errno.h>
 #include "Bruinbase.h"
 #include "SqlEngine.h"
 
@@ -132,22 +133,44 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
 
 RC SqlEngine::load(const string& table, const string& loadfile, bool index)
 {
-  RecordFile rf;   // RecordFile containing the table
-  RecordId   rid;  // record cursor for table scanning
+  // If the table file doesn't exist, create it.
+  // If the table file does exist, append it.
+  // Declaration:
+    RC rc;
+    RecordFile recordFile;
+    RecordId recordId;
+    string readLine;
+    int key;
+    string value;
+    const string tableName = table + ".tbl";
+    const char writeMode = 'w';
+    //INDEX?????
 
-  RC     rc;
-  int    key;     
-  string value;
-  int    count;
-  int    diff;
-
-  // open the table file, if it doesn't exist, open would create it.
-  if ((rc = rf.open(table + ".tbl", 'r')) < 0) {
-    fprintf(stderr, "Error: failed to open the table \n", table.c_str());
-    return rc;
+  //Open loadfile for reading using fstream
+    ifstream tableFile(loadfile.c_str());
+    //Deal with open failure
+    if (!tableFile.is_open()) {
+      fprintf(stderr, "%s cannot be opened\n", loadfile.c_str());
+      cerr << "Cannot open " << loadfile << " Error number: " << strerror(errno) << endl;
+      return errno;
+    }
+  //Open a table in write mode
+  rc = recordFile.open(tableName, writeMode);
+  //Currently assume index is false for part A, will change this later
+  while (getline(tableFile, readLine)) {
+    if(parseLoadLine(readLine, key, value) != 0) {
+      cerr << "Error occured while parsing tableFile. Error number: " << strerror(errno) << endl;
+      return errno;
+    }
+    if (recordFile.append(key, value, recordId) != 0) {
+      cerr << "Error occured while appending a line to RecordFile. Error number: " << strerror(errno) << endl;
+      return errno;
+    }
   }
-
-  return 0;
+  //close files
+  recordFile.close();
+  tableFile.close();
+  return rc;
 }
 
 RC SqlEngine::parseLoadLine(const string& line, int& key, string& value)
@@ -189,4 +212,4 @@ RC SqlEngine::parseLoadLine(const string& line, int& key, string& value)
     if (loc != string::npos) { value.erase(loc); }
 
     return 0;
-}
+ }
