@@ -146,7 +146,7 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
     const char writeMode = 'w';
     //INDEX?????
 
-  //Open loadfile for reading using fstream
+    //Open loadfile for reading using fstream
     ifstream tableFile(loadfile.c_str());
     //Deal with open failure
     if (!tableFile.is_open()) {
@@ -154,23 +154,28 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
       cerr << "Cannot open " << loadfile << " Error number: " << strerror(errno) << endl;
       return errno;
     }
-  //Open a table in write mode
-  rc = recordFile.open(tableName, writeMode);
-  //Currently assume index is false for part A, will change this later
-  while (getline(tableFile, readLine)) {
-    if(parseLoadLine(readLine, key, value) != 0) {
-      cerr << "Error occured while parsing tableFile. Error number: " << strerror(errno) << endl;
-      return errno;
+    //Open a table in write mode
+    rc = recordFile.open(tableName, writeMode);
+
+    if (rc < 0) {
+      fprintf(stderr, "Error: while reading a tuple from table %s\n", table.c_str());
+      return rc;
     }
-    if (recordFile.append(key, value, recordId) != 0) {
-      cerr << "Error occured while appending a line to RecordFile. Error number: " << strerror(errno) << endl;
-      return errno;
+    //Currently assume index is false for part A, will change this later
+    while (getline(tableFile, readLine)) {
+      if(parseLoadLine(readLine, key, value) != 0) {
+        cerr << "Error occured while parsing tableFile. Error number: " << strerror(errno) << endl;
+        return errno;
+      }
+      if (recordFile.append(key, value, recordId) != 0) {
+        cerr << "Error occured while appending a line to RecordFile. Error number: " << strerror(errno) << endl;
+        return errno;
+      }
     }
-  }
-  //close files
-  recordFile.close();
-  tableFile.close();
-  return rc;
+    //close files
+    recordFile.close();
+    tableFile.close();
+    return rc;
 }
 
 RC SqlEngine::parseLoadLine(const string& line, int& key, string& value)
