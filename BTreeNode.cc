@@ -1,15 +1,35 @@
 #include "BTreeNode.h"
+#include <string.h>
 
 using namespace std;
 
+//BTLeafNode Constructor
+BTLeafNode::BTLeafNode() {
+	//Clear up the buffer
+	memset(buffer, 0, PageFile::PAGE_SIZE);
+	//Set keyCount and maxKeyCount
+	keyCount = 0;
+	maxKeyCount = ((PageFile::PAGE_SIZE) - sizeof(PageId))/sizeof(leafEntry);
+}
+
+/**Getter**/
+int BTLeafNode::getMaxKeyCount() {
+	return maxKeyCount;
+}
+
+bool BTLeafNode::isFull() {
+	return (getKeyCount() >= getMaxKeyCount());
+}
 /*
  * Read the content of the node from the page pid in the PageFile pf.
  * @param pid[IN] the PageId to read
  * @param pf[IN] PageFile to read from
  * @return 0 if successful. Return an error code if there is an error.
  */
-RC BTLeafNode::read(PageId pid, const PageFile& pf)
-{ return 0; }
+RC BTLeafNode::read(PageId pid, const PageFile& pf) { 
+	//read selected PageFile into buffer.
+	return pf.read(pid, buffer);
+}
     
 /*
  * Write the content of the node to the page pid in the PageFile pf.
@@ -17,15 +37,18 @@ RC BTLeafNode::read(PageId pid, const PageFile& pf)
  * @param pf[IN] PageFile to write to
  * @return 0 if successful. Return an error code if there is an error.
  */
-RC BTLeafNode::write(PageId pid, PageFile& pf)
-{ return 0; }
+RC BTLeafNode::write(PageId pid, PageFile& pf) { 
+	//write to the selected PageFile from the buffer.
+	return pf.write(pid, buffer);
+}
 
 /*
  * Return the number of keys stored in the node.
  * @return the number of keys in the node
  */
-int BTLeafNode::getKeyCount()
-{ return 0; }
+int BTLeafNode::getKeyCount(){
+	
+}
 
 /*
  * Insert a (key, rid) pair to the node.
