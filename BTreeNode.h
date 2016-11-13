@@ -12,12 +12,10 @@
 
 #include "RecordFile.h"
 #include "PageFile.h"
-#include <limits.h>
 
 #define ENTRY_OFFSET sizeof(PageId)
 
 const PageId INVALID_PID = -1;
-const int    INVALID_KEY = INT_MIN;
 const unsigned ROOT_DEPTH = 1;
 
 
