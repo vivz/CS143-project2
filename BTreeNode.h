@@ -31,6 +31,7 @@ class BTLeafNode {
     bool isFull();
     /**Getter**/
     int getMaxKeyCount();
+    void showEntries();
    /**
     * Insert the (key, rid) pair to the node.
     * Remember that all keys inside a B+tree node should be kept sorted.
@@ -120,7 +121,7 @@ class BTLeafNode {
     typedef struct {
         RecordId rid;
         int key;
-    } leafEntry;
+    } LeafEntry;
     int keyCount;
     int maxKeyCount;
 }; 
@@ -131,6 +132,13 @@ class BTLeafNode {
  */
 class BTNonLeafNode {
   public:
+
+   /**Constructor**/
+    BTNonLeafNode();
+
+   /***Getter***/
+    int getMaxKeyCount();
+    bool isFull();
    /**
     * Insert a (key, pid) pair to the node.
     * Remember that all keys inside a B+tree node should be kept sorted.
@@ -201,6 +209,12 @@ class BTNonLeafNode {
     * that contains the node.
     */
     char buffer[PageFile::PAGE_SIZE];
+    typedef struct{
+        PageId pid;
+        int key;
+    } NonLeafEntry;
+    int keyCount;
+    int maxKeyCount;
 }; 
 
 #endif /* BTREENODE_H */
