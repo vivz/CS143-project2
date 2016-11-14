@@ -9,13 +9,13 @@ int test_insert() {
     int key = 0;
     PageId pid = 0;
 
-    //node.locateChildPtr(searchKey, pid);
-    //printf("pid is %i\n", pid);
+    node.locateChildPtr(key, pid);
+    printf("pid is %i\n", pid);
 
-    //status = node.insert(searchKey, pid);
+    //status = node.insert(key, pid);
     //printf("insert() returned %i\n", status);
 
-    for (; key < 10; ++key, ++pid) {
+    for (; key <= 10; ++key, ++pid) {
         node.insert(key*10, pid);
     }
 
@@ -31,6 +31,7 @@ int test_insert() {
     BTNonLeafNode newNode;
     status = newNode.read(0,pf);
     newNode.showEntriesWithFirstPageId();
+    return 0;
 
 }
 
@@ -42,6 +43,7 @@ int test_root(){
     int key = 300;
     root.initializeRoot(pid1, key, pid2);
     root.showEntriesWithFirstPageId();
+    return 0;
 }
 
 int test_insertAndSplit(){
@@ -61,6 +63,7 @@ int test_insertAndSplit(){
     printf("\nAFTER SPLIT\n");
     left.showEntriesWithFirstPageId();
     right.showEntriesWithFirstPageId(); 
+    return 0;
 }
 
 int test_locateChildPtr(){
@@ -88,14 +91,17 @@ int test_locateChildPtr(){
         printf("Larger than all searchKey test successful.\n");
     else
         printf("test largest locate failed.\n");
+    return 0;
 }
 int main() {
     printf("\n\n");
-    //TODO: key is 0 tests
-    //test_insert();
-    //test_root();
-    //test_insertAndSplit();
+    test_insert();
+    printf("------------TEST INSERT END----------------------");
+    test_root();
+    printf("------------TEST ROOT END----------------------");
+    test_insertAndSplit();
+    printf("------------TEST insertAndSplit END----------------------");
     test_locateChildPtr();
-    
+    printf("------------TEST locateChildPtr END----------------------");
     printf("\n\n");
 }

@@ -178,6 +178,9 @@ int test_split(){
 
 int main() {
     test_leaf_insert_RW();
-    //test_sibling();
-    //test_split();
+    printf("------------TEST insert END----------------------");
+    test_sibling();
+    printf("------------TEST sibling END----------------------");
+    test_split();
+    printf("------------TEST Split END----------------------");
 }
