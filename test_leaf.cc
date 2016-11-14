@@ -30,7 +30,7 @@ int test_leaf_insert_RW() {
 
     printf("\n--------------------------------------------------\n");
 
-    const int numInserts = 3;
+    const int numInserts = 10;
 
     for (int i = 0; i < numInserts; ++i) {
         printf("\n");
@@ -144,7 +144,7 @@ int test_split(){
 
     //load all of a .del into one
     RecordFile rf;
-    rf.open("test.tbl",'w');
+    rf.open("movie.tbl",'w');
 
     RecordId rid;
     rid.pid = 0;
@@ -152,7 +152,7 @@ int test_split(){
     int key;
     string value;
 
-    for(int i = 0; i<8; ++i){
+    for(int i = 0; i<84; ++i){
         rid.sid = i;
         rf.read(rid, key, value);
         left.insert(key,rid);
@@ -165,9 +165,10 @@ int test_split(){
 
     RecordId rid2;
     rid2.pid = 0;
-    rid2.sid = 8;
+    rid2.sid = 84;
     int sibKey = -5;
-    left.insertAndSplit(1000,rid2, right,sibKey);
+    //left.insertAndSplit(3229,rid2, right,sibKey);
+    left.insertAndSplit(212,rid2, right,sibKey);
 
     left.showEntries();
     printf("sib key after split is %d\n", sibKey);

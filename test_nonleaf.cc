@@ -1,6 +1,6 @@
 #include "stdio.h"
 #include "BTreeNode.h"
-/*
+
 int test_insert() {
     RC status;
 
@@ -98,4 +98,4 @@ int main() {
     test_locateChildPtr();
     
     printf("\n\n");
-} */
+}
