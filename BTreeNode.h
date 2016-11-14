@@ -13,11 +13,25 @@
 #include "RecordFile.h"
 #include "PageFile.h"
 
+#define ENTRY_OFFSET sizeof(PageId)
+
+const PageId INVALID_PID = -1;
+const unsigned ROOT_DEPTH = 1;
+
+
 /**
  * BTLeafNode: The class representing a B+tree leaf node.
  */
 class BTLeafNode {
   public:
+    /**Constructor**/
+    BTLeafNode();
+
+    //Check if the node is full
+    bool isFull();
+    /**Getter**/
+    int getMaxKeyCount();
+    void showEntries();
    /**
     * Insert the (key, rid) pair to the node.
     * Remember that all keys inside a B+tree node should be kept sorted.
@@ -104,6 +118,12 @@ class BTLeafNode {
     * that contains the node.
     */
     char buffer[PageFile::PAGE_SIZE];
+    typedef struct {
+        RecordId rid;
+        int key;
+    } LeafEntry;
+    int keyCount;
+    int maxKeyCount;
 }; 
 
 
@@ -112,6 +132,18 @@ class BTLeafNode {
  */
 class BTNonLeafNode {
   public:
+
+   /**Constructor**/
+    BTNonLeafNode();
+
+   /***Getter***/
+    int getMaxKeyCount();
+    bool isFull();
+
+    /**Test purpose **/
+    void showEntries();
+    void showEntriesWithFirstPageId();
+
    /**
     * Insert a (key, pid) pair to the node.
     * Remember that all keys inside a B+tree node should be kept sorted.
@@ -182,6 +214,12 @@ class BTNonLeafNode {
     * that contains the node.
     */
     char buffer[PageFile::PAGE_SIZE];
+    typedef struct{
+        PageId pid;
+        int key;
+    } NonLeafEntry;
+    int keyCount;
+    int maxKeyCount;
 }; 
 
 #endif /* BTREENODE_H */
