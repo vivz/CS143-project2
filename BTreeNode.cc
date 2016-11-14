@@ -24,7 +24,6 @@ bool BTLeafNode::isFull() {
 
 /**Test purpose copied from github**/
 void BTLeafNode::showEntries() {
-    return;
     int nKeys = getKeyCount();
     if (nKeys == 0) {
         printf("THE NODE IS EMPTY\n");
@@ -204,7 +203,7 @@ RC BTLeafNode::locate(int searchKey, int& eid) {
 RC BTLeafNode::readEntry(int eid, int& key, RecordId& rid){
 	if(eid < 0 || eid > getKeyCount()) {
 		return RC_NO_SUCH_RECORD;
-	} else if(!*buffer) {
+	} else if(buffer==NULL) {
 		//TODO: Make sure what should be returned here.
 		return -1;
 	} else {
@@ -325,7 +324,8 @@ RC BTNonLeafNode::insert(int key, PageId pid) {
     temp->pid = pid;
     //Add keyCount
     int *keyCountPtr = (int*) buffer;
-    *keyCountPtr = *keyCountPtr++;
+    int curCount = *keyCountPtr;
+    *keyCountPtr = curCount++;
 
     return 0;
 }
@@ -380,18 +380,18 @@ RC BTNonLeafNode::locateChildPtr(int searchKey, PageId& pid) {
 		//if the search key is smaller than the current key
 		PageId *pidPtr = (PageId*) buffer;
 		pid = *pidPtr;
-	} else {
-		//if the search is larger or equal to the current key
-		for(i = 1; i < numKeys; i++) {
-			if (searchKey < (temp + i)->key){
-            	pid = (temp+i-1)->pid;
-            	return 0;       
-        	}
-		}
-		//searchKey is the largest over all
-		pid = (temp + i-1)->pid;
-    	return 0;
+        return 0;
 	}
+    //if the search is larger or equal to the current key
+    for(i = 1; i < numKeys; i++) {
+        if (searchKey < (temp + i)->key){
+            pid = (temp+i-1)->pid;
+            return 0;
+        }
+    }
+    //searchKey is the largest over all
+    pid = (temp + i-1)->pid;
+    return 0;
 }
 
 /*

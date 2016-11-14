@@ -30,7 +30,7 @@ int test_leaf_insert_RW() {
 
     printf("\n--------------------------------------------------\n");
 
-    const int numInserts = 8;
+    const int numInserts = 3;
 
     for (int i = 0; i < numInserts; ++i) {
         printf("\n");
@@ -69,7 +69,8 @@ int test_leaf_insert_RW() {
     status = anotherNode.read(0, pf);
     printf("opened file for reading with status code %i\n", status);
     anotherNode.showEntries();
-
+    
+    return 0;
 }
 
 int test_sibling() {
@@ -131,6 +132,8 @@ int test_sibling() {
 
     newRight.read(sib_pid, newPf);
     newRight.showEntries();
+    
+    return 0;
 }
 
 int test_split(){
@@ -141,7 +144,7 @@ int test_split(){
 
     //load all of a .del into one
     RecordFile rf;
-    rf.open("xsmall.tbl",'w');
+    rf.open("test.tbl",'w');
 
     RecordId rid;
     rid.pid = 0;
@@ -164,12 +167,12 @@ int test_split(){
     rid2.pid = 0;
     rid2.sid = 8;
     int sibKey = -5;
-    left.insertAndSplit(9999,rid2, right,sibKey);
+    left.insertAndSplit(1000,rid2, right,sibKey);
 
     left.showEntries();
     printf("sib key after split is %d\n", sibKey);
     right.showEntries();
-
+    return 0;
 }
 
 int main() {
