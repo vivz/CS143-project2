@@ -10,13 +10,9 @@ test_leaf
 test_nonleaf
 sibling_test.txt
 split_test.txt
-test.del
 test.tbl
 test1.txt
 test.txt
-test_leaf.cc
-test_node.cc
-test_nonleaf.cc
 xsmall.tbl
 test1.idx
 test_index
