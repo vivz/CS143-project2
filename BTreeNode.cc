@@ -400,7 +400,7 @@ RC BTNonLeafNode::insertAndSplit(int key, PageId pid, BTNonLeafNode& sibling, in
         int *keyCountPtr = (int*) buffer;
         int curCount = *keyCountPtr;
     	*keyCountPtr = curCount - 1;
-      }
+    }
    
     return 0; 
 }

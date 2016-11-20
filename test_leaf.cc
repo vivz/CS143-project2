@@ -30,7 +30,7 @@ int test_leaf_insert_RW() {
 
     printf("\n--------------------------------------------------\n");
 
-    const int numInserts = 10;
+    const int numInserts = 8;
 
     for (int i = 0; i < numInserts; ++i) {
         printf("\n");
