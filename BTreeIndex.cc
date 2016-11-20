@@ -9,6 +9,8 @@
  
 #include "BTreeIndex.h"
 #include "BTreeNode.h"
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -38,7 +40,6 @@ BTreeIndex::BTreeIndex()
 RC BTreeIndex::open(const string& indexname, char mode)
 {
     RC   rc;
-  	char page[PageFile::PAGE_SIZE];
 
   	// open the index file
   	if ((rc = pf.open(indexname, mode)) < 0) 
@@ -46,12 +47,12 @@ RC BTreeIndex::open(const string& indexname, char mode)
   	
 	if(mode == 'r' || mode == 'w'){
 
-		if( pf.read(0, page) < 0) {
+		if( pf.read(0, buffer) < 0) {
 			return RC_FILE_READ_FAILED;
 		}
-		memcpy(&rootPid, page, sizeof(PageId)); 
-		memcpy(&treeHeight, page+sizeof(PageId), sizeof(int));
-
+		memcpy(&rootPid, buffer, sizeof(PageId)); 
+		memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
+		printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
 		return 0;
 	}
 	else {
@@ -65,6 +66,7 @@ RC BTreeIndex::open(const string& indexname, char mode)
  */
 RC BTreeIndex::close()
 {
+	printf("Writing to index file before closing:\nrootPid = %i, treeHeight = %i.\n", rootPid, treeHeight);
 	RC rc = writeVariables();
 	if(rc < 0)
 		return rc;

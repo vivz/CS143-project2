@@ -110,6 +110,7 @@ RC BTLeafNode::insert(int key, const RecordId& rid) {
 	}
 	//Insert new leaf entry
 	//TODO: Make sure there's no edge cases
+	//TODO: handle duplicate insertion
 	LeafEntry *insertedEntry = (LeafEntry*)(buffer + sizeof(int)) + eid;
 	insertedEntry->key = key;
 	insertedEntry->rid = rid;
