@@ -27,6 +27,15 @@ typedef struct {
   int     eid;  
 } IndexCursor;
 
+typedef struct {
+  PageId pid;
+  int key;
+} NonLeafEntry;
+
+typedef struct {
+  RecordId rid;
+  int key;
+} LeafEntry;
 /**
  * Implements a B-Tree index for bruinbase.
  * 
@@ -87,10 +96,17 @@ class BTreeIndex {
    * @return error code. 0 if no error
    */
   RC readForward(IndexCursor& cursor, int& key, RecordId& rid);
+
   
  private:
+  RC insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, NonLeafEntry& overflow, bool& has_overflow);
+  RC insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, bool& has_overflow);
+  RC locateHelper(int key, PageId current_pid, int level, IndexCursor& cursor);
+  RC writeVariables();
+  
   PageFile pf;         /// the PageFile used to store the actual b+tree in disk
 
+  char buffer[PageFile::PAGE_SIZE];
   PageId   rootPid;    /// the PageId of the root node
   int      treeHeight; /// the height of the tree
   /// Note that the content of the above two variables will be gone when
