@@ -18,5 +18,3 @@ test_leaf.cc
 test_node.cc
 test_nonleaf.cc
 xsmall.tbl
-test1.idx
-test_index
