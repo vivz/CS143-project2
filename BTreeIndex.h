@@ -44,6 +44,7 @@ class BTreeIndex {
  public:
   BTreeIndex();
 
+  int setTreeHeight(int height);
   /**
    * Open the index file in read or write mode.
    * Under 'w' mode, the index file should be created if it does not exist.

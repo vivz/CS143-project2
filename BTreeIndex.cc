@@ -30,6 +30,11 @@ BTreeIndex::BTreeIndex()
 	memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int));
 }
 
+int BTreeIndex::setTreeHeight(int height) { 
+	treeHeight = height;
+	memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int)); 
+}
+
 /*
  * Open the index file in read or write mode.
  * Under 'w' mode, the index file should be created if it does not exist.
@@ -168,7 +173,8 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	//if overflow is returned, insert new entry at the current level
 	if(has_overflow){
 		//need to overflow one level up
-		if(node.isFull()){
+		//if(node.isFull()){
+		if(node.getKeyCount()>=2){
 			BTNonLeafNode sibling;
 			has_overflow = true;
 			int midKey = -1;
@@ -198,7 +204,8 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 	BTLeafNode leafNode;
 	leafNode.read(leafId, pf);
 
-	if(!leafNode.isFull()) {
+	//if(!leafNode.isFull()) {
+	if(leafNode.getKeyCount() < 2) {
 		leafNode.insert(LE.key, LE.rid);
 		has_overflow = false;
 	}else{
