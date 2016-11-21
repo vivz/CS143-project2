@@ -277,6 +277,8 @@ int BTNonLeafNode::getMaxKeyCount() {
 	return maxKeyCount;
 }
 
+
+
 /**Tes purpose **/
 void BTNonLeafNode::showEntries() {
     //return;
@@ -295,6 +297,18 @@ void BTNonLeafNode::showEntriesWithFirstPageId(){
     showEntries();
 }
 
+PageId BTNonLeafNode::getFirstPid(){
+	PageId* ptr = (PageId *) (buffer + sizeof(int));
+	return (PageId) *ptr;
+}
+
+PageId BTNonLeafNode::getNextPid(int eid){
+	if (eid >= keyCount){
+		return -1;
+	}
+	NonLeafEntry* e = (NonLeafEntry *) (buffer + sizeof(PageId)+ sizeof(int) + sizeof(NonLeafEntry)*eid);
+	return e->pid;
+}
 
 
 /*

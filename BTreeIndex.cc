@@ -39,7 +39,7 @@ BTreeIndex::BTreeIndex()
  */
 RC BTreeIndex::open(const string& indexname, char mode)
 {
-    RC   rc;
+    RC rc;
 
   	// open the index file
   	if ((rc = pf.open(indexname, mode)) < 0) 
@@ -73,6 +73,53 @@ RC BTreeIndex::close()
     return pf.close();
 }
 
+RC BTreeIndex::printEntries(){
+	RC rc =printEntriesHelper(rootPid, 0);
+	if(rc<0){
+		printf("Error in printEntries\n");
+		return rc;
+	}
+}
+
+RC BTreeIndex::printEntriesHelper(PageId current_pid, int level){
+	RC rc;
+	//base case
+	if(level == treeHeight){
+		BTLeafNode leafNode;
+		rc = leafNode.read(current_pid, pf);
+		if(rc < 0){
+			printf("error reading the leafNode under current_pid\n" );
+			return rc;
+		}
+		printf("LeafNode with pid %i------", current_pid);
+		leafNode.showEntries();
+		return 0;
+	}
+	//non leaf node 
+	else{
+		BTNonLeafNode nonLeafNode;
+		rc = nonLeafNode.read(current_pid, pf);
+		if(rc < 0){
+			printf("error reading the nonLeafNode under current_pid\n" );
+			return rc;
+		}
+		printf("nonLeafNode with pid %i=============", current_pid);
+		nonLeafNode.showEntriesWithFirstPageId();
+		PageId iterator = nonLeafNode.getFirstPid();
+		int i = 0;
+		while(iterator!= -1){
+			//printf("iterator is %i, i is %i", iterator, i);
+			rc = printEntriesHelper(iterator, level+1);
+			if(rc < 0){
+				printf("error calling next level\n" );
+				return rc;
+			}
+			iterator = nonLeafNode.getNextPid(i++);
+		}
+		return 0;
+	}
+}
+
 RC BTreeIndex::writeVariables()
 {
 	memcpy(buffer, &rootPid, sizeof(PageId));
@@ -95,10 +142,9 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 {
 	//index file is empty
 	if (treeHeight== 0){
-		BTNonLeafNode root;
-
-		PageId small_pid = pf.endPid();
+		
 		BTLeafNode small;
+		PageId small_pid = pf.endPid();
 		if(small.write(small_pid, pf))
 			return RC_FILE_WRITE_FAILED;
 
@@ -108,8 +154,9 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		if(big.write(big_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
-		root.initializeRoot(small_pid, key, big_pid);
+		BTNonLeafNode root;
 		rootPid = pf.endPid();
+		root.initializeRoot(small_pid, key, big_pid);
 		if( root.write(rootPid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 

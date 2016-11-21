@@ -97,12 +97,16 @@ class BTreeIndex {
    */
   RC readForward(IndexCursor& cursor, int& key, RecordId& rid);
 
+  //testing 
+  RC printEntries();
+
   
  private:
   RC insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, NonLeafEntry& overflow, bool& has_overflow);
   RC insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, bool& has_overflow);
   RC locateHelper(int key, PageId current_pid, int level, IndexCursor& cursor);
   RC writeVariables();
+  RC printEntriesHelper(PageId current_pid, int level);
   
   PageFile pf;         /// the PageFile used to store the actual b+tree in disk
 

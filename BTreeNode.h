@@ -143,6 +143,8 @@ class BTNonLeafNode {
     /**Test purpose **/
     void showEntries();
     void showEntriesWithFirstPageId();
+    PageId getFirstPid();
+    PageId getNextPid(int eid);
 
    /**
     * Insert a (key, pid) pair to the node.
