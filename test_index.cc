@@ -13,7 +13,7 @@ int main(){
 
 	//read in from the record file
 	RecordFile rf;
-	RC rc = rf.open("test.tbl", 'r');
+	RC rc = rf.open("test_unsorted.tbl", 'r');
 	if(rc < 0)
 		return rc;
 
@@ -21,7 +21,7 @@ int main(){
 	rid.pid = (PageId) 0;
 	RecordId last = rf.endRid();
 	printf("last rid is %i, %i \n", last.pid, last.sid);
-	const int numInserts = 4;
+	const int numInserts = 6;
 	int key;
     string value;
 
@@ -43,6 +43,8 @@ int main(){
 
 	//search
 	/*
+	btIndex.close();
+	btIndex.open("test1.idx", 'r');
 
 	IndexCursor ic;
 	for(int searchkey = 1000; searchkey<1015; searchkey++){

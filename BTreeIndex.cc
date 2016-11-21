@@ -120,7 +120,7 @@ RC BTreeIndex::printEntriesHelper(PageId current_pid, int level){
 			printf("error reading the nonLeafNode under current_pid\n" );
 			return rc;
 		}
-		printf("nonLeafNode with pid %i=============", current_pid);
+		//printf("nonLeafNode with pid %i=============", current_pid);
 		nonLeafNode.showEntriesWithFirstPageId();
 		PageId iterator = nonLeafNode.getFirstPid();
 		int i = 0;
@@ -229,7 +229,7 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	else{
 		PageId childPid = -1;
 		node.locateChildPtr(toInsert.key, childPid);
-		printf("Search key is %i, look into the node with pid %i\n", toInsert.key, childPid);
+		//printf("Search key is %i, look into the node with pid %i\n", toInsert.key, childPid);
 		rc = insertNonLeaf(toInsert, childPid, level+1, overflow, has_overflow);
 		if(rc!=0)
 			return rc;
@@ -274,7 +274,7 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 		leafNode.insert(LE.key, LE.rid);
 		has_overflow = false;
 	}else{
-		printf("isFULL!!\n");
+		//printf("isFULL!!\n");
 		BTLeafNode sibling;
 		PageId original_next = leafNode.getNextNodePtr();
 		PageId new_pid = pf.endPid();
@@ -291,7 +291,7 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 		sibling.setNextNodePtr(original_next);
 		if(sibling.write(new_pid, pf)!=0)
 			return RC_FILE_WRITE_FAILED;
-		printf("sibling node with pid %i-----", new_pid);
+		//printf("sibling node with pid %i-----", new_pid);
 		//sibling.showEntries();
 	}
 
@@ -384,5 +384,7 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 		cursor.pid = current.getNextNodePtr();
 		cursor.eid = 0;
 	}
+	if(current_pid== -1)
+		return RC_INVALID_CURSOR;
     return 0;
 }
