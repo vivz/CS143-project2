@@ -93,6 +93,7 @@ RC BTreeIndex::printEntriesHelper(PageId current_pid, int level){
 		}
 		printf("LeafNode with pid %i------", current_pid);
 		leafNode.showEntries();
+		printf("its sibling is leafNode with pid %i\n", leafNode.getNextNodePtr());
 		return 0;
 	}
 	//non leaf node 
@@ -108,7 +109,6 @@ RC BTreeIndex::printEntriesHelper(PageId current_pid, int level){
 		PageId iterator = nonLeafNode.getFirstPid();
 		int i = 0;
 		while(iterator!= -1){
-			//printf("iterator is %i, i is %i", iterator, i);
 			rc = printEntriesHelper(iterator, level+1);
 			if(rc < 0){
 				printf("error calling next level\n" );
@@ -145,7 +145,7 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		
 		BTLeafNode small;
 		PageId small_pid = pf.endPid();
-		if(small.write(small_pid, pf))
+		if(small.write(small_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
 		BTLeafNode big;
@@ -154,6 +154,14 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		if(big.write(big_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
+		printf("small_pid: %i, big_pid %i\n", small_pid, big_pid);
+		small.setNextNodePtr(big_pid);
+		if(small.write(small_pid, pf)<0)
+			return RC_FILE_WRITE_FAILED;
+
+		printf("small has sibling: %i\n", small.getNextNodePtr());
+
+
 		BTNonLeafNode root;
 		rootPid = pf.endPid();
 		root.initializeRoot(small_pid, key, big_pid);
@@ -161,7 +169,7 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 			return RC_FILE_WRITE_FAILED;
 
 		treeHeight = 1;
-
+		small.showEntries();
 		return writeVariables();
 	}
 	else{ 
@@ -179,13 +187,14 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 
 		//new root
 		if(has_overflow){
+
 			BTNonLeafNode root;
 			root.initializeRoot(rootPid, overflow.key, overflow.pid);
 			PageId new_pid = pf.endPid();
 			if(root.write(new_pid, pf)< 0)
 				return RC_FILE_WRITE_FAILED;
-			rootPid = new_pid;
 
+			rootPid = new_pid;
 			treeHeight++;
 			return writeVariables();
 		}
