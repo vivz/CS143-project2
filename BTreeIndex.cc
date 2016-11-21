@@ -44,7 +44,7 @@ int BTreeIndex::setTreeHeight(int height) {
  */
 RC BTreeIndex::open(const string& indexname, char mode)
 {
-    RC   rc;
+    RC rc;
 
   	// open the index file
   	if ((rc = pf.open(indexname, mode)) < 0) 
@@ -78,6 +78,53 @@ RC BTreeIndex::close()
     return pf.close();
 }
 
+RC BTreeIndex::printEntries(){
+	RC rc =printEntriesHelper(rootPid, 0);
+	if(rc<0){
+		printf("Error in printEntries\n");
+		return rc;
+	}
+}
+
+RC BTreeIndex::printEntriesHelper(PageId current_pid, int level){
+	RC rc;
+	//base case
+	if(level == treeHeight){
+		BTLeafNode leafNode;
+		rc = leafNode.read(current_pid, pf);
+		if(rc < 0){
+			printf("error reading the leafNode under current_pid\n" );
+			return rc;
+		}
+		printf("LeafNode with pid %i------", current_pid);
+		leafNode.showEntries();
+		printf("its sibling is leafNode with pid %i\n", leafNode.getNextNodePtr());
+		return 0;
+	}
+	//non leaf node 
+	else{
+		BTNonLeafNode nonLeafNode;
+		rc = nonLeafNode.read(current_pid, pf);
+		if(rc < 0){
+			printf("error reading the nonLeafNode under current_pid\n" );
+			return rc;
+		}
+		printf("nonLeafNode with pid %i=============", current_pid);
+		nonLeafNode.showEntriesWithFirstPageId();
+		PageId iterator = nonLeafNode.getFirstPid();
+		int i = 0;
+		while(iterator!= -1){
+			rc = printEntriesHelper(iterator, level+1);
+			if(rc < 0){
+				printf("error calling next level\n" );
+				return rc;
+			}
+			iterator = nonLeafNode.getNextPid(i++);
+		}
+		return 0;
+	}
+}
+
 RC BTreeIndex::writeVariables()
 {
 	memcpy(buffer, &rootPid, sizeof(PageId));
@@ -100,11 +147,10 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 {
 	//index file is empty
 	if (treeHeight== 0){
-		BTNonLeafNode root;
-
-		PageId small_pid = pf.endPid();
+		
 		BTLeafNode small;
-		if(small.write(small_pid, pf))
+		PageId small_pid = pf.endPid();
+		if(small.write(small_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
 		BTLeafNode big;
@@ -113,13 +159,22 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		if(big.write(big_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
-		root.initializeRoot(small_pid, key, big_pid);
+		printf("small_pid: %i, big_pid %i\n", small_pid, big_pid);
+		small.setNextNodePtr(big_pid);
+		if(small.write(small_pid, pf)<0)
+			return RC_FILE_WRITE_FAILED;
+
+		printf("small has sibling: %i\n", small.getNextNodePtr());
+
+
+		BTNonLeafNode root;
 		rootPid = pf.endPid();
+		root.initializeRoot(small_pid, key, big_pid);
 		if( root.write(rootPid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
 		treeHeight = 1;
-
+		small.showEntries();
 		return writeVariables();
 	}
 	else{ 
@@ -137,13 +192,14 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 
 		//new root
 		if(has_overflow){
+
 			BTNonLeafNode root;
 			root.initializeRoot(rootPid, overflow.key, overflow.pid);
 			PageId new_pid = pf.endPid();
 			if(root.write(new_pid, pf)< 0)
 				return RC_FILE_WRITE_FAILED;
-			rootPid = new_pid;
 
+			rootPid = new_pid;
 			treeHeight++;
 			return writeVariables();
 		}
