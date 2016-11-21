@@ -292,14 +292,14 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 		if(sibling.write(new_pid, pf)!=0)
 			return RC_FILE_WRITE_FAILED;
 		printf("sibling node with pid %i-----", new_pid);
-		sibling.showEntries();
+		//sibling.showEntries();
 	}
 
 	if(leafNode.write(leafId, pf))
 		return RC_FILE_WRITE_FAILED;
 
-	printf("original node with pid %i-----", leafId);
-	leafNode.showEntries();
+	//printf("original node with pid %i-----", leafId);
+	//leafNode.showEntries();
 	
 	return 0;
 }

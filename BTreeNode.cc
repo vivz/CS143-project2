@@ -163,11 +163,17 @@ RC BTLeafNode::insertAndSplit(int key, const RecordId& rid,
         temp->rid.sid = -1;
         temp->rid.pid = -1;
         //Update keyCount
+        /*
         int *keyCountPtr = (int*) buffer;
         int curCount = *keyCountPtr;
     	*keyCountPtr = curCount - 1;
-    	keyCount = getKeyCount();
+    	keyCount = getKeyCount();*/
 	}
+	//Update keyCount
+    int *keyCountPtr = (int*) buffer;
+    int curCount = *keyCountPtr;
+    *keyCountPtr = curCount/2;
+    keyCount = curCount/2;
 	//insert the node wanted to be inserted
 	if (eid < splitPos) {
 		insert(key, rid);
@@ -407,11 +413,13 @@ RC BTNonLeafNode::insertAndSplit(int key, PageId pid, BTNonLeafNode& sibling, in
         //Clean up
         cur->key = 0;
         cur->pid = 0;
-        //Update keyCount
-        int *keyCountPtr = (int*) buffer;
-        int curCount = *keyCountPtr;
-    	*keyCountPtr = curCount - 1;
     }
+
+    //Update keyCount
+    int *keyCountPtr = (int*) buffer;
+    int curCount = *keyCountPtr;
+    *keyCountPtr = curCount/2;
+    keyCount = curCount/2;
    
     return 0; 
 }

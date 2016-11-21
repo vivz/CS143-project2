@@ -54,12 +54,12 @@ int test_insert(BTreeIndex index) {
         printf("insert 60 returned %i\n", status);
         status = index.insert(55, rid);
         printf("insert 55 returned %i\n", status);
+        status = index.insert(52, rid);
+        printf("insert 52 returned %i\n", status);
+        status = index.insert(25, rid);
+        printf("insert 25 returned %i\n", status);
         index.printEntries();
-        //status = index.insert(52, rid);
-        //printf("insert 52 returned %i\n", status);
-        //status = index.insert(25, rid);
-        //printf("insert 25 returned %i\n", status);
-        /*
+        
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(key, cursor);
@@ -84,8 +84,8 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }   */
-/*
+        }   
+
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(52, cursor);
@@ -97,8 +97,8 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }*/
-        /*
+        }
+        
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(25, cursor);
@@ -110,7 +110,7 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }   */
+        }
 /*
         cursor.pid = 1;
         cursor.eid = 0;
@@ -197,7 +197,7 @@ int test_insert(BTreeIndex index) {
 int main() {
     RC status ;
     PageFile pf;
-    string index_filename = "test.idx";
+    string index_filename = "test2.idx";
     status = pf.open(index_filename,'w');
     int rootPid = 1;
     cout << "Page file open status: " << status << endl;
