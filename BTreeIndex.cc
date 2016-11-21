@@ -104,9 +104,7 @@ RC BTreeIndex::printEntriesHelper(PageId current_pid, int level){
 			printf("error reading the leafNode under current_pid\n" );
 			return rc;
 		}
-		printf("LeafNode with pid %i------", current_pid);
 		leafNode.showEntries();
-		printf("its sibling is leafNode with pid %i\n", leafNode.getNextNodePtr());
 		return 0;
 	}
 	//non leaf node 
@@ -167,13 +165,9 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		if(big.write(big_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
-		printf("small_pid: %i, big_pid %i\n", small_pid, big_pid);
 		small.setNextNodePtr(big_pid);
 		if(small.write(small_pid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
-
-		printf("small has sibling: %i\n", small.getNextNodePtr());
-
 
 		BTNonLeafNode root;
 		rootPid = pf.endPid();
@@ -182,7 +176,6 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 			return RC_FILE_WRITE_FAILED;
 
 		treeHeight = 1;
-		small.showEntries();
 		//return writeVariables();
 		return 0;
 	}
@@ -239,6 +232,8 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	if(has_overflow){
 		//need to overflow one level up
 		if(node.isFull()){
+
+		//if(node.getKeyCount()==2){
 			BTNonLeafNode sibling;
 			has_overflow = true;
 			int midKey = -1;
@@ -268,27 +263,39 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 	BTLeafNode leafNode;
 	leafNode.read(leafId, pf);
 
-	if(!leafNode.isFull()) {
+	//if(!leafNode.isFull()) {
+	if(leafNode.getKeyCount()<2) {
+		//printf("leafNode count: %i\n", leafNode.getKeyCount());
 		leafNode.insert(LE.key, LE.rid);
 		has_overflow = false;
 	}else{
+		printf("isFULL!!\n");
 		BTLeafNode sibling;
 		PageId original_next = leafNode.getNextNodePtr();
 		PageId new_pid = pf.endPid();
 		overflow.pid = new_pid;
 		has_overflow = true;
 
-		leafNode.insertAndSplit(LE.key, LE.rid, sibling, overflow.key);
+		RC rc = leafNode.insertAndSplit(LE.key, LE.rid, sibling, overflow.key);
+		if(rc<0){
+			printf("Error in insertAndSplit\n");
+			return rc;
+		}
 
 		leafNode.setNextNodePtr(new_pid);
 		sibling.setNextNodePtr(original_next);
 		if(sibling.write(new_pid, pf)!=0)
 			return RC_FILE_WRITE_FAILED;
+		printf("sibling node with pid %i-----", new_pid);
+		sibling.showEntries();
 	}
 
 	if(leafNode.write(leafId, pf))
 		return RC_FILE_WRITE_FAILED;
 
+	printf("original node with pid %i-----", leafId);
+	leafNode.showEntries();
+	
 	return 0;
 }
 

@@ -13,25 +13,29 @@ int main(){
 
 	//read in from the record file
 	RecordFile rf;
-	RC rc = rf.open("test_unsorted.tbl", 'r');
+	RC rc = rf.open("test.tbl", 'r');
 	if(rc < 0)
 		return rc;
 
 	RecordId rid;
-	const int numInserts = 4;
+	rid.pid = (PageId) 0;
+	RecordId last = rf.endRid();
+	printf("last rid is %i, %i \n", last.pid, last.sid);
+	const int numInserts = 10;
 	int key;
     string value;
 
-	for (int i = 3; i < numInserts; i++) {
-		rid.pid = (PageId) 0;
-        rid.sid = i;
+	for (int i = 0; i < numInserts; ++i) {
+        rid.sid = i%9;
+        if(rid.sid==8)
+        	rid.pid++;
 
         rc = rf.read(rid, key, value);
         if(rc < 0){
-        	printf("error read from .tbl\n");
+        	printf("error read from .tbl %i, %i \n", rid.pid, rid.sid);
 			return rc;
         }
-		printf("prepping insert of {%i, '%s'}\n", key, value.c_str());
+		printf("prepping insert of {key: %i, rid:{pid: %i, sid: %i}}\n", key, rid.pid, rid.sid);
 
 		rc = btIndex.insert(key, rid);
 		printf("btIndex.insert() returned %i\n", rc);
