@@ -11,7 +11,7 @@ SqlParser.tab.c: SqlParser.y
 	bison -d -psql $<
 
 clean:
-	rm -f bruinbase bruinbase.exe *.o *~ lex.sql.c SqlParser.tab.c SqlParser.tab.h test_leaf test_nonleaf test_index
+	rm -f bruinbase bruinbase.exe *.o *~ lex.sql.c SqlParser.tab.c SqlParser.tab.h test_leaf test_nonleaf test_index test_bindex
 
 
 LEAF = test_leaf.cc SqlParser.tab.c lex.sql.c SqlEngine.cc BTreeIndex.cc BTreeNode.cc RecordFile.cc PageFile.cc 
@@ -28,3 +28,8 @@ INDEX = test_index.cc SqlParser.tab.c lex.sql.c SqlEngine.cc BTreeIndex.cc BTree
 
 test_index: test_index.cc
 	g++ -ggdb -o $@ $(INDEX)
+
+BINDEX = test_bindex.cc SqlParser.tab.c lex.sql.c SqlEngine.cc BTreeIndex.cc BTreeNode.cc RecordFile.cc PageFile.cc 
+
+test_bindex: test_bindex.cc
+	g++ -ggdb -o $@ $(BINDEX)
