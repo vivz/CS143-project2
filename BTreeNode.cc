@@ -141,12 +141,6 @@ RC BTLeafNode::insertAndSplit(int key, const RecordId& rid,
 	if(sibling.getKeyCount() != 0) {
 		return RC_INVALID_ATTRIBUTE;
 	}
-	//TODO: uncomment this for later
-	//Not large enought to be split
-	
-	if(keyCount < maxKey) {
-		return RC_INVALID_FILE_FORMAT;
-	}
 	//Get eid to be inserted
 	int eid = -1;
 	locate(key, eid);
@@ -171,6 +165,7 @@ RC BTLeafNode::insertAndSplit(int key, const RecordId& rid,
         int *keyCountPtr = (int*) buffer;
         int curCount = *keyCountPtr;
     	*keyCountPtr = curCount - 1;
+    	keyCount = getKeyCount();
 	}
 	//insert the node wanted to be inserted
 	if (eid < splitPos) {

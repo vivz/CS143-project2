@@ -54,11 +54,12 @@ int test_insert(BTreeIndex index) {
         printf("insert 60 returned %i\n", status);
         status = index.insert(55, rid);
         printf("insert 55 returned %i\n", status);
-        status = index.insert(52, rid);
-        printf("insert 52 returned %i\n", status);
-        status = index.insert(25, rid);
-        printf("insert 25 returned %i\n", status);
-        
+        index.printEntries();
+        //status = index.insert(52, rid);
+        //printf("insert 52 returned %i\n", status);
+        //status = index.insert(25, rid);
+        //printf("insert 25 returned %i\n", status);
+        /*
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(key, cursor);
@@ -83,8 +84,8 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }   
-
+        }   */
+/*
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(52, cursor);
@@ -96,8 +97,8 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }
-
+        }*/
+        /*
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(25, cursor);
@@ -109,8 +110,8 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }   
-
+        }   */
+/*
         cursor.pid = 1;
         cursor.eid = 0;
         status = index.locate(20, cursor);
@@ -187,11 +188,8 @@ int test_insert(BTreeIndex index) {
             status = index.readForward(cursor, key, rid);
             printf("readForward() returned %i: key: %i, rid: {pid: %i, sid: %i} \n", 
                                         status, key, rid.pid, rid.sid);
-        }   
+        }   */
     }
-
-
-    index.close();
 
 }
 
@@ -252,6 +250,7 @@ int main() {
 
     int treeHeight = 2;
     // TODO: make the index be composed of these nodes.
+    
     BTreeIndex index1;
     status = index1.open(index_filename, 'r');
     index1.setTreeHeight(treeHeight);
@@ -264,6 +263,8 @@ int main() {
 
     //-----------------------------------------------------//
     //------------------------------------------------------//
-    //test_locate(index1);
+    test_locate(index1);
     test_insert(index2);
+    index1.close();
+    index2.close();
 }
