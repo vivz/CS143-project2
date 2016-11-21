@@ -18,17 +18,19 @@ int main(){
 		return rc;
 
 	RecordId rid;
-	const int numInserts = 1;
+	const int numInserts = 4;
 	int key;
     string value;
 
-	for (int i = 0; i < numInserts; ++i) {
+	for (int i = 3; i < numInserts; i++) {
 		rid.pid = (PageId) 0;
         rid.sid = i;
 
         rc = rf.read(rid, key, value);
-        if(rc < 0)
+        if(rc < 0){
+        	printf("error read from .tbl\n");
 			return rc;
+        }
 		printf("prepping insert of {%i, '%s'}\n", key, value.c_str());
 
 		rc = btIndex.insert(key, rid);

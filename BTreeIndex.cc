@@ -24,10 +24,6 @@ BTreeIndex::BTreeIndex()
     rootPid = -1;
     treeHeight = 0;
 
-    //copy rootPid, PageId to the buffer
-    memset(buffer, 0, PageFile::PAGE_SIZE); 
-	memcpy(buffer, &rootPid, sizeof(PageId)); 
-	memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int));
 }
 
 /*
@@ -45,8 +41,7 @@ RC BTreeIndex::open(const string& indexname, char mode)
   	if ((rc = pf.open(indexname, mode)) < 0) 
   		return rc;
   	
-	if(mode == 'r' || mode == 'w'){
-
+	if(mode == 'r'){
 		if( pf.read(0, buffer) < 0) {
 			return RC_FILE_READ_FAILED;
 		}
@@ -54,6 +49,24 @@ RC BTreeIndex::open(const string& indexname, char mode)
 		memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
 		printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
 		return 0;
+
+	}else if(mode == 'w'){
+		//file is empty
+		if(pf.endPid() <=0){
+    		memset(buffer, 0, PageFile::PAGE_SIZE); 
+			memcpy(buffer, &rootPid, sizeof(PageId)); 
+			memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int));
+			pf.write(0, buffer);
+		}else{
+
+			if( pf.read(0, buffer) < 0) {
+				return RC_FILE_READ_FAILED;
+			}
+			memcpy(&rootPid, buffer, sizeof(PageId)); 
+			memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
+			printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
+			return 0;
+		}
 	}
 	else {
 		return RC_INVALID_FILE_MODE;
@@ -170,7 +183,8 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 
 		treeHeight = 1;
 		small.showEntries();
-		return writeVariables();
+		//return writeVariables();
+		return 0;
 	}
 	else{ 
 
@@ -196,7 +210,7 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 
 			rootPid = new_pid;
 			treeHeight++;
-			return writeVariables();
+			//return writeVariables();
 		}
 		return 0;
 	}
