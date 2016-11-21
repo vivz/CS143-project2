@@ -229,12 +229,13 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	else{
 		PageId childPid = -1;
 		node.locateChildPtr(toInsert.key, childPid);
+		printf("Search key is %i, look into the node with pid %i\n", toInsert.key, childPid);
 		rc = insertNonLeaf(toInsert, childPid, level+1, overflow, has_overflow);
 		if(rc!=0)
 			return rc;
 	}
 	//if overflow is returned, insert new entry at the current level
-	if(has_overflow){
+	if(has_overflow && level!=treeHeight){
 		//need to overflow one level up
 
 		//if(node.isFull()){

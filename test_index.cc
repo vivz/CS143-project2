@@ -21,7 +21,7 @@ int main(){
 	rid.pid = (PageId) 0;
 	RecordId last = rf.endRid();
 	printf("last rid is %i, %i \n", last.pid, last.sid);
-	const int numInserts = 10;
+	const int numInserts = 4;
 	int key;
     string value;
 
