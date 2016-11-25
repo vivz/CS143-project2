@@ -238,8 +238,8 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	if(has_overflow && level!=treeHeight){
 		//need to overflow one level up
 
-		//if(node.isFull()){
-		if(node.getKeyCount()>=2){
+		if(node.isFull()){
+		//if(node.getKeyCount()>=2){
 			BTNonLeafNode sibling;
 			has_overflow = true;
 			int midKey = -1;
@@ -269,8 +269,8 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 	BTLeafNode leafNode;
 	leafNode.read(leafId, pf);
 
-	//if(!leafNode.isFull()) {
-	if(leafNode.getKeyCount() < 2) {
+	if(!leafNode.isFull()) {
+	//if(leafNode.getKeyCount() < 2) {
 		leafNode.insert(LE.key, LE.rid);
 		has_overflow = false;
 	}else{
@@ -384,7 +384,7 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 		cursor.pid = current.getNextNodePtr();
 		cursor.eid = 0;
 	}
-	if(current_pid== -1)
+	if(cursor.pid== -1)
 		return RC_INVALID_CURSOR;
     return 0;
 }
