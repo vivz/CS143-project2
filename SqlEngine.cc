@@ -15,6 +15,7 @@
 #include <errno.h>
 #include "Bruinbase.h"
 #include "SqlEngine.h"
+#include "BTreeIndex.h"
 
 using namespace std;
 
@@ -137,12 +138,14 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
   // If the table file does exist, append it.
   // Declaration:
     RC rc;
+    BTreeIndex btree;
     RecordFile recordFile;
     RecordId recordId;
     string readLine;
     int key;
     string value;
     const string tableName = table + ".tbl";
+    const string indexName = table + ".idx";
     const char writeMode = 'w';
     //INDEX?????
 
@@ -150,7 +153,6 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
     ifstream tableFile(loadfile.c_str());
     //Deal with open failure
     if (!tableFile.is_open()) {
-      fprintf(stderr, "%s cannot be opened\n", loadfile.c_str());
       cerr << "Cannot open " << loadfile << " Error number: " << strerror(errno) << endl;
       return errno;
     }
@@ -158,18 +160,49 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
     rc = recordFile.open(tableName, writeMode);
 
     if (rc < 0) {
-      fprintf(stderr, "Error: while reading a tuple from table %s\n", table.c_str());
+      cerr << "Error occured while reading a tupe from table " << table << endl;
       return rc;
     }
-    //Currently assume index is false for part A, will change this later
-    while (getline(tableFile, readLine)) {
-      if(parseLoadLine(readLine, key, value) != 0) {
-        cerr << "Error occured while parsing tableFile. Error number: " << strerror(errno) << endl;
-        return errno;
+    //Index is true
+    if(index) {
+      //Open the Btree index file with write mode
+      rc = btree.open(indexName, writeMode);
+      if (rc != 0) {
+        cerr << "Error occured while opening the index file, Error code: " << rc << endl;
+        return rc;
       }
-      if (recordFile.append(key, value, recordId) != 0) {
-        cerr << "Error occured while appending a line to RecordFile. Error number: " << strerror(errno) << endl;
-        return errno;
+
+      //Read lines from the load file
+      while (getline(tableFile, readLine)) {
+        if(parseLoadLine(readLine, key, value) != 0) {
+          cerr << "Error occured while parsing tableFile. Error number: " << RC_FILE_WRITE_FAILED << endl;
+          return RC_FILE_WRITE_FAILED;
+        }
+        if (recordFile.append(key, value, recordId) != 0) {
+          cerr << "Error occured while appending a line to RecordFile. Error number: " << RC_FILE_WRITE_FAILED << endl;
+          return RC_FILE_WRITE_FAILED;
+        }
+
+        //Insert into Btree
+        rc = btree.insert(key, recordId);
+        if (rc != 0) {
+          cerr << "Error occured while inserting (key, rid) into Btree. Error code: " << rc << endl;
+          return rc;
+        }
+
+      }
+    }
+    //Index is false
+    else {
+      while (getline(tableFile, readLine)) {
+       if(parseLoadLine(readLine, key, value) != 0) {
+          cerr << "Error occured while parsing tableFile. Error number: " << RC_FILE_WRITE_FAILED << endl;
+          return RC_FILE_WRITE_FAILED;
+        }
+        if (recordFile.append(key, value, recordId) != 0) {
+          cerr << "Error occured while appending a line to RecordFile. Error number: " << RC_FILE_WRITE_FAILED << endl;
+          return RC_FILE_WRITE_FAILED;
+        }
       }
     }
     //close files
