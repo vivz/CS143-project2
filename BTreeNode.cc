@@ -9,7 +9,6 @@ using namespace std;
 BTLeafNode::BTLeafNode() {
 	//Clear up the buffer
 	memset(buffer, 0, PageFile::PAGE_SIZE);
-	setNextNodePtr(-1);
 	//Set keyCount and maxKeyCount
 	keyCount = 0;
 	maxKeyCount = ((PageFile::PAGE_SIZE) - sizeof(PageId) - sizeof(int))/sizeof(LeafEntry);

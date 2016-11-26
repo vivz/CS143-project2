@@ -42,21 +42,32 @@ int main(){
 	}
 
 	//search
-	/*
+	
 	btIndex.close();
 	btIndex.open("test1.idx", 'r');
 
 	IndexCursor ic;
-	for(int searchkey = 1000; searchkey<1015; searchkey++){
+	int searchkey = 1000;
+	/*
+	for(searchkey = 1000; searchkey<1015; searchkey++){
 		rc = btIndex.locate(searchkey, ic);
 		if(rc<0){
 			printf("searchkey %i not found\n", searchkey);
 		}else{
 			printf("entry %i is at pid: %i, eid: %i\n", searchkey, ic.pid, ic.eid);
 		}
-	}*/
+	}
+	*/
+	
+	rc = btIndex.locate(searchkey, ic);
+	//int i = 0;
+	while(rc == 0){
+		rc = btIndex.readForward(ic, searchkey, rid);
+		printf("rc is %i\n",rc );
+		printf("Key: %i, rid: {pid: %i, sid: %i}, ic for next position: {pid: %i, eid: %i}\n", searchkey, rid.pid, rid.sid, ic.pid, ic.eid);
 
-	btIndex.printEntries();
+	}
+	//btIndex.printEntries();
 
 	btIndex.close();
 

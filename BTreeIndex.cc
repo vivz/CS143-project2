@@ -181,7 +181,6 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 			return RC_FILE_WRITE_FAILED;
 
 		treeHeight = 1;
-		//return writeVariables();
 		return 0;
 	}
 	else{ 
@@ -208,7 +207,6 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 
 			rootPid = new_pid;
 			treeHeight++;
-			//return writeVariables();
 		}
 		return 0;
 	}
@@ -238,8 +236,8 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	if(has_overflow && level!=treeHeight){
 		//need to overflow one level up
 
-		if(node.isFull()){
-		//if(node.getKeyCount()>=2){
+		//if(node.isFull()){
+		if(node.getKeyCount()>=2){
 			BTNonLeafNode sibling;
 			has_overflow = true;
 			int midKey = -1;
@@ -269,8 +267,8 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 	BTLeafNode leafNode;
 	leafNode.read(leafId, pf);
 
-	if(!leafNode.isFull()) {
-	//if(leafNode.getKeyCount() < 2) {
+	//if(!leafNode.isFull()) {
+	if(leafNode.getKeyCount() < 2) {
 		leafNode.insert(LE.key, LE.rid);
 		has_overflow = false;
 	}else{
@@ -377,14 +375,14 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 	if(rc2 < 0)
 		return rc2;
 
-	if(cursor.eid + 1 < current.getMaxKeyCount()){
+	if(cursor.eid + 1 < current.getKeyCount()){
 		cursor.eid += 1;
 	}
 	else{
 		cursor.pid = current.getNextNodePtr();
 		cursor.eid = 0;
 	}
-	if(cursor.pid== -1)
+	if(cursor.pid == 0)
 		return RC_INVALID_CURSOR;
     return 0;
 }
