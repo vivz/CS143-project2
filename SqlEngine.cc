@@ -170,7 +170,9 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         goto found_exit;
     }
     //TODO: if no constrains on key, no need to access the tree;
-    //if(start_key == -1 && end_key == -1)
+    if(start_key == 0 && end_key == std::numeric_limits<int>::max()) {
+      goto 
+    }
 
     //************************
     //locate the starting point 
