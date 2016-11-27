@@ -145,7 +145,6 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         continue;
       }
       //Found index
-      printf("cond[%i] is %i\n", i, atoi(cond[i].value));
       if (cond[i].comp == SelCond::EQ) {
         start_key = atoi(cond[i].value);
         end_key = atoi(cond[i].value);
@@ -173,12 +172,14 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     }
     //TODO: if no constrains on key, no need to access the tree;
     //if(start_key == -1 && end_key == -1)
-    //Initialization
-    count = 0;
-    rid.pid = rid.sid = 0;
-    indexCursor.pid = btree.getRootPid();
-    printf("start_key is %i, end_key is %i\n",start_key, end_key );
+
+    //printf("start_key is %i, end_key is %i\n",start_key, end_key );
     btree.locate(start_key, indexCursor);
+    //printf("endRid is {pid: %i, sid: %i}\n", rf.endRid().pid, rf.endRid().sid);
+    printf("indexCursor is pid:%i, eid:%i\n", indexCursor.pid, indexCursor.eid);
+    rc = btree.readForward(indexCursor, key, rid);
+    printf("rc is %i\n",rc);
+
     //Keep finding
     while(btree.readForward(indexCursor, key, rid)==0) {
       if(key > end_key)

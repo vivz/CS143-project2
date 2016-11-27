@@ -374,6 +374,9 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 	RC rc = current.read(cursor.pid, pf);
 	if(rc < 0)
 		return rc;
+
+	printf("hiiiii\n");
+	current.showEntries();
 	
 	RC rc2 = current.readEntry(cursor.eid, key, rid);
 	if(rc2 < 0)
