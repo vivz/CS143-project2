@@ -134,8 +134,9 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   }
   //if there exists the btree index
   else {
-    //Deal with cond
-    
+    //************************
+    //Find the range for keys
+    //************************
     int start_key = 0;
     int end_key = std::numeric_limits<int>::max();
 
@@ -161,11 +162,9 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       else if (cond[i].comp == SelCond::LT){
         end_key = min(end_key, atoi(cond[i].value)-1);
       }
-      
     }
     //finalize the conditions
     if(start_key > end_key){
-        //TODO: do we need to return no such record? 
         rc = RC_NO_SUCH_RECORD;
         btree.close();
         goto found_exit;
@@ -173,17 +172,22 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //TODO: if no constrains on key, no need to access the tree;
     //if(start_key == -1 && end_key == -1)
 
-    ////////////////////////////
+    //************************
     //locate the starting point 
-    ///////////////////////////
+    //************************
     //printf("start_key is %i, end_key is %i\n",start_key, end_key );
+
+    RC status;
     btree.locate(start_key, indexCursor);
-    rc = btree.readForward(indexCursor, key, rid);
-    
-    ////////////////////////////
+    if(btree.isEmtpyLeaf(indexCursor.pid)){
+      status = btree.readForward(indexCursor, key, rid);
+    }
+
+    //*************************
     //iterate untill the end point
-    ///////////////////////////
-    while(btree.readForward(indexCursor, key, rid)==0) {
+    //*************************
+    while(status == 0) {
+      status = btree.readForward(indexCursor, key, rid);
       if(key > end_key)
         break;
       // read the tuple

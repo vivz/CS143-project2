@@ -99,8 +99,10 @@ class BTreeIndex {
    */
   RC readForward(IndexCursor& cursor, int& key, RecordId& rid);
 
+  bool isEmtpyLeaf(PageId pid);
   //testing 
   RC printEntries();
+
 
   
  private:
