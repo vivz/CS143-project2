@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <errno.h>
+#include <limits>
 #include "Bruinbase.h"
 #include "SqlEngine.h"
 #include "BTreeIndex.h"
@@ -148,24 +149,24 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       //Found index
       
       if (cond[i].comp == SelCond::EQ) {
-        start_key = cond[i].value;
-        end_key = cond[i].value;
+        start_key = atoi(cond[i].value);
+        end_key = atoi(cond[i].value);
         /*
         index = i;
         break;
         */
       }
       else if (cond[i].comp == SelCond::GE){
-        start_key = max(start_key, cond[i].value);
+        start_key = max(start_key, atoi(cond[i].value));
       }
       else if (cond[i].comp == SelCond::LE){
-        end_key = min(end_key, cond[i].value);
+        end_key = min(end_key, atoi(cond[i].value));
       }
       else if (cond[i].comp == SelCond::GT){
-        start_key = max(start_key, cond[i].value+1);
+        start_key = max(start_key, atoi(cond[i].value)+1);
       }
       else if (cond[i].comp == SelCond::LT){
-        end_key = mix(end_key, cond[i].value-1);
+        end_key = min(end_key, atoi(cond[i].value)-1);
       }
       
       /*
@@ -180,7 +181,6 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         rc = RC_NO_SUCH_RECORD;
         btree.close();
         goto found_exit;
-        break;
     }
     //TODO: if no constrains on key, no need to access the tree;
     //if(start_key == -1 && end_key == -1)
@@ -188,7 +188,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       start_key = 0;
     }
     if(end_key == -1){
-      end_key = INT_MAX;
+      end_key = std::numeric_limits<int>::max();
     }
     //Initialization
     count = 0;
@@ -214,10 +214,20 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       }
             
       // check the conditions on the tuple
+      bool valid_tuple = true;
       for (int i = 0; i < cond.size(); i++) {
         // compute the difference between the tuple value and the condition value
         if(cond[i].attr == 2){
             diff = strcmp(value.c_str(), cond[i].value);
+        }
+        if((cond[i].comp==SelCond::LT && diff>=0)||
+          (cond[i].comp==SelCond::LE && diff>0) || 
+          (cond[i].comp==SelCond::GE && diff<0) ||
+          (cond[i].comp==SelCond::GT && diff>=0) ||
+          (cond[i].comp==SelCond::EQ && diff!=0) ||
+          (cond[i].comp==SelCond::NE && diff==0)){
+          valid_tuple = false;
+          break;
         }
         /*
         switch (cond[i].attr) {
@@ -230,31 +240,33 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         }*/
         
         // Deal with conditions
+        /*
         switch (cond[i].comp) {
           //Less than
           case SelCond::LT:
             if (diff >= 0) {
-              //if (cond[i].attr == 1) 
-                //goto found_exit;
-              //else 
+              if (cond[i].attr == 1) 
+                goto found_exit;
+              else 
+                valid_tuple = false;
                 continue;
             }
             break;
           //Less equal
           case SelCond::LE:
             if (diff > 0) {
-              //if (cond[i].attr == 1) 
-               // goto found_exit;
-              //else 
+              if (cond[i].attr == 1) 
+                goto found_exit;
+              else 
                 continue;
             }
             break;
           //Equal
           case SelCond::EQ:
             if (diff != 0) {
-              //if (cond[i].attr == 1) 
-               // goto found_exit;
-              //else 
+              if (cond[i].attr == 1) 
+                goto found_exit;
+              else 
                 continue;
             }
             break;
@@ -273,23 +285,24 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
             if (diff <= 0) 
               continue;
             break;
-        }
+        }*/
       }
       // the condition is met for the tuple.
       // increase matching tuple counter
-      count++;
-            
-      // print the tuple
-      switch (attr) {
-        case 1:  // SELECT key
-          fprintf(stdout, "%d\n", key);
-          break;
-        case 2:  // SELECT value
-          fprintf(stdout, "%s\n", value.c_str());
-          break;
-        case 3:  // SELECT *
-          fprintf(stdout, "%d '%s'\n", key, value.c_str());
-          break;
+      if(valid_tuple){
+        count++;
+        // print the tuple
+        switch (attr) {
+          case 1:  // SELECT key
+            fprintf(stdout, "%d\n", key);
+            break;
+          case 2:  // SELECT value
+            fprintf(stdout, "%s\n", value.c_str());
+            break;
+          case 3:  // SELECT *
+            fprintf(stdout, "%d '%s'\n", key, value.c_str());
+            break;
+        }
       }
     }
   }
