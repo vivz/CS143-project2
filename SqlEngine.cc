@@ -134,12 +134,10 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   }
   //if there exists the btree index
   else {
-    //index = -1;
     //Deal with cond
-    //TODO: fixing the logic here 
     
-    int start_key = -1;
-    int end_key = -1;
+    int start_key = 0;
+    int end_key = std::numeric_limits<int>::max();
 
     for (int i = 0; i < cond.size(); i++) {
       //Only check for key
@@ -147,14 +145,9 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         continue;
       }
       //Found index
-      
       if (cond[i].comp == SelCond::EQ) {
         start_key = atoi(cond[i].value);
         end_key = atoi(cond[i].value);
-        /*
-        index = i;
-        break;
-        */
       }
       else if (cond[i].comp == SelCond::GE){
         start_key = max(start_key, atoi(cond[i].value));
@@ -169,11 +162,6 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         end_key = min(end_key, atoi(cond[i].value)-1);
       }
       
-      /*
-      if ((cond[i].comp == SelCond::GT || cond[i].comp == SelCond::GE) &&
-          (index == -1 || atoi(cond[i].value) > atoi(cond[index].value))) {
-        index = i;
-      }*/
     }
     //finalize the conditions
     if(start_key > end_key){
@@ -184,32 +172,22 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     }
     //TODO: if no constrains on key, no need to access the tree;
     //if(start_key == -1 && end_key == -1)
-    if(start_key == -1){
-      start_key = 0;
-    }
-    if(end_key == -1){
-      end_key = std::numeric_limits<int>::max();
-    }
-    //Initialization
-    count = 0;
-    rid.pid = rid.sid = 0;
-    indexCursor.pid = btree.getRootPid();
-    //Check index part
-    /*
-    if (index > -1) {
-      btree.locate(atoi(cond[index].value), indexCursor);
-    }
-    else {
-      btree.locate(0, indexCursor);
-    }*/
+
+    //printf("start_key is %i, end_key is %i\n",start_key, end_key );
     btree.locate(start_key, indexCursor);
+    //printf("endRid is {pid: %i, sid: %i}\n", rf.endRid().pid, rf.endRid().sid);
+    printf("indexCursor is pid:%i, eid:%i\n", indexCursor.pid, indexCursor.eid);
+    rc = btree.readForward(indexCursor, key, rid);
+    printf("rc is %i\n",rc);
+
     //Keep finding
     while(btree.readForward(indexCursor, key, rid)==0) {
       if(key > end_key)
         break;
+      printf("rid is {pid: %i, sid :%i}\n",rid.pid, rid.sid);
       // read the tuple
       if ((rc = rf.read(rid, key, value)) < 0) {
-        fprintf(stderr, "Error: while reading a tuple from table %s\n", table.c_str());
+        fprintf(stderr, "Error: while reading a tuple from table %s, %i\n", table.c_str(), rc);
         goto exit_select;
       }
             
@@ -229,63 +207,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
           valid_tuple = false;
           break;
         }
-        /*
-        switch (cond[i].attr) {
-          case 1:
-            diff = key - atoi(cond[i].value);
-            break;
-          case 2:
-            diff = strcmp(value.c_str(), cond[i].value);
-            break;
-        }*/
         
-        // Deal with conditions
-        /*
-        switch (cond[i].comp) {
-          //Less than
-          case SelCond::LT:
-            if (diff >= 0) {
-              if (cond[i].attr == 1) 
-                goto found_exit;
-              else 
-                valid_tuple = false;
-                continue;
-            }
-            break;
-          //Less equal
-          case SelCond::LE:
-            if (diff > 0) {
-              if (cond[i].attr == 1) 
-                goto found_exit;
-              else 
-                continue;
-            }
-            break;
-          //Equal
-          case SelCond::EQ:
-            if (diff != 0) {
-              if (cond[i].attr == 1) 
-                goto found_exit;
-              else 
-                continue;
-            }
-            break;
-          //Not Equal
-          case SelCond::NE:
-            if (diff == 0) 
-              continue;
-            break;
-          //Greater Equal
-          case SelCond::GE:
-            if (diff < 0) 
-              continue;
-            break;
-          //Greater than
-          case SelCond::GT:
-            if (diff <= 0) 
-              continue;
-            break;
-        }*/
       }
       // the condition is met for the tuple.
       // increase matching tuple counter
@@ -376,9 +298,9 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
           cerr << "Error occured while inserting (key, rid) into Btree. Error code: " << rc << endl;
           return rc;
         }
+
       }
-      //close the index tree and file
-      btree.close();
+       btree.close();
     }
     //Index is false
     else {

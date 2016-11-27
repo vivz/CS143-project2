@@ -21,8 +21,6 @@ int main(){
 	a.value = (char*)a_value.c_str();
 	std::vector<SelCond> cond;
 	cond.push_back(a);
-
-	
 	SqlEngine::select(1, "xsmall", cond);
 	return 0;
 }
