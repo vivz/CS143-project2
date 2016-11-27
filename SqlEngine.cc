@@ -67,6 +67,8 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   rc = btree.open(indexFile, readMode);
   //if the index file doesn't exist
   if (rc < 0) {
+  
+  no_btree:
     rid.pid = rid.sid = 0;
     while (rid < rf.endRid()) {
       // read the tuple
@@ -171,9 +173,9 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         btree.close();
         goto found_exit;
     }
-    //TODO: if no constrains on key, no need to access the tree;
+    //if no constrains on key, no need to access the tree;
     if(start_key == 0 && end_key == std::numeric_limits<int>::max()) {
-      goto 
+      goto no_btree;
     }
 
     //************************
