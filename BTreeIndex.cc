@@ -338,11 +338,12 @@ RC BTreeIndex::locateHelper(int key, PageId current_pid, int level, IndexCursor&
 
 		RC rc = leafNode.locate(key, eid);
 
+		cursor.eid=eid;
+		cursor.pid=current_pid;
+
 		if(rc!=0)
 			return rc;
 
-		cursor.eid=eid;
-		cursor.pid=current_pid;
 		return 0;
 	}
 	else{
