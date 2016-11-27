@@ -26,6 +26,10 @@ BTreeIndex::BTreeIndex()
 
 }
 
+PageId BTreeIndex::getRootPid() {
+	return rootPid;
+}
+
 int BTreeIndex::setTreeHeight(int height) { 
 	treeHeight = height;
 	memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int)); 

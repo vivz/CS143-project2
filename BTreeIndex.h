@@ -43,7 +43,8 @@ typedef struct {
 class BTreeIndex {
  public:
   BTreeIndex();
-
+  //Getter
+  PageId getRootPid();
   int setTreeHeight(int height);
   /**
    * Open the index file in read or write mode.
