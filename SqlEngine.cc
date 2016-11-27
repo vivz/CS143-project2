@@ -377,8 +377,9 @@ RC SqlEngine::load(const string& table, const string& loadfile, bool index)
           cerr << "Error occured while inserting (key, rid) into Btree. Error code: " << rc << endl;
           return rc;
         }
-
       }
+      //close the index tree and file
+      btree.close();
     }
     //Index is false
     else {
