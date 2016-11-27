@@ -1,26 +1,56 @@
-Bruinbase> Bruinbase> start_key is 0, end_key is 2147483647
+Bruinbase> Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Read from xsmall.idx:
+rootPid = 3, treeHeight = 1.
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
 8
-Bruinbase> start_key is 0, end_key is 2499
+Bruinbase> Read from xsmall.idx:
+rootPid = 3, treeHeight = 1.
 272 'Baby Take a Bow'
 1578 'G.I. Blues'
 2244 'King Creole'
 2342 'Last Ride, The'
-Bruinbase> Bruinbase> Bruinbase> start_key is 0, end_key is 2147483647
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Bruinbase> Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Read from small.idx:
+rootPid = 3, treeHeight = 1.
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
 50
-Bruinbase> start_key is 101, end_key is 499
+Bruinbase> Read from small.idx:
+rootPid = 3, treeHeight = 1.
 173 'Angel Levine, The'
 175 'Angel Unchained'
 272 'Baby Take a Bow'
 303 'Bananas'
 395 'Big Jake'
 489 'Blue Hawaii'
-Bruinbase> Bruinbase> Bruinbase> start_key is 0, end_key is 2147483647
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Bruinbase> Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Read from medium.idx:
+rootPid = 3, treeHeight = 1.
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
 100
-Bruinbase> start_key is 489, end_key is 489
+Bruinbase> Read from medium.idx:
+rootPid = 3, treeHeight = 1.
 489 'Blue Hawaii'
-Bruinbase> Bruinbase> Bruinbase> start_key is 0, end_key is 2147483647
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Bruinbase> Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Read from large.idx:
+rootPid = 3, treeHeight = 1.
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
 1000
-Bruinbase> start_key is 4501, end_key is 2147483647
+Bruinbase> Read from large.idx:
+rootPid = 3, treeHeight = 1.
 4506 'Waterworld'
 4515 'Wedding Party, The'
 4524 'Welcome to the Dollhouse'
@@ -50,7 +80,10 @@ Bruinbase> start_key is 4501, end_key is 2147483647
 4727 'Sabrina, the Teenage Witch'
 4732 '¡Dispara!'
 4733 'la folie'
-Bruinbase> start_key is 4501, end_key is 2147483647
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Read from large.idx:
+rootPid = 3, treeHeight = 1.
 4506 'Waterworld'
 4515 'Wedding Party, The'
 4524 'Welcome to the Dollhouse'
@@ -80,11 +113,22 @@ Bruinbase> start_key is 4501, end_key is 2147483647
 4727 'Sabrina, the Teenage Witch'
 4732 '¡Dispara!'
 4733 'la folie'
-Bruinbase> Bruinbase> Bruinbase> start_key is 0, end_key is 2147483647
+Writing to index file before closing:
+rootPid = 3, treeHeight = 1.
+Bruinbase> Bruinbase> Writing to index file before closing:
+rootPid = 131, treeHeight = 2.
+Bruinbase> Read from xlarge.idx:
+rootPid = 131, treeHeight = 2.
+Writing to index file before closing:
+rootPid = 131, treeHeight = 2.
 12278
-Bruinbase> start_key is 4240, end_key is 4240
+Bruinbase> Read from xlarge.idx:
+rootPid = 131, treeHeight = 2.
 4240 'Tommy Boy'
-Bruinbase> start_key is 401, end_key is 499
+Writing to index file before closing:
+rootPid = 131, treeHeight = 2.
+Bruinbase> Read from xlarge.idx:
+rootPid = 131, treeHeight = 2.
 402 'Big Squeeze, The'
 403 'Big Tease, The'
 405 'Bigfoot: The Unforgettable Encounter'
@@ -149,4 +193,6 @@ Bruinbase> start_key is 401, end_key is 499
 492 'Blue Ridge Fall'
 493 'Blues Brothers 2000'
 496 'Bobby G. Cant Swim'
+Writing to index file before closing:
+rootPid = 131, treeHeight = 2.
 Bruinbase> Bruinbase> 

@@ -6,7 +6,7 @@ using namespace std;
 
 int main(){
 	RC rc;
-	rc = SqlEngine::load("small","small.del", true);
+	rc = SqlEngine::load("xlarge","xlarge.del", true);
 	//rc = SqlEngine::load("small","small.del", true);
 	//rc = SqlEngine::load("medium","medium.del", true);
 	//rc = SqlEngine::load("large","large.del", true);
@@ -32,6 +32,6 @@ int main(){
 	//cond.push_back(a);
 	//cond.push_back(b);
 
-	SqlEngine::select(4, "small", cond);
+	SqlEngine::select(4, "xlarge", cond);
 	return 0;
 }

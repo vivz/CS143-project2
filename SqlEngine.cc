@@ -139,10 +139,12 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //************************
     int start_key = 0;
     int end_key = std::numeric_limits<int>::max();
+    bool condition_on_value = false;
 
     for (int i = 0; i < cond.size(); i++) {
       //Only check for key
       if (cond[i].attr != 1) {
+        condition_on_value = true;
         continue;
       }
       //Found index
@@ -192,27 +194,29 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       status = btree.readForward(indexCursor, key, rid);
       if(key > end_key)
         break;
-      // read the tuple
-      if ((rc = rf.read(rid, key, value)) < 0) {
-        fprintf(stderr, "Error: while reading a tuple from table %s, %i\n", table.c_str(), rc);
-        goto exit_select;
-      }
-            
-      // check the conditions on the tuple
+
       bool valid_tuple = true;
-      for (int i = 0; i < cond.size(); i++) {
-        // compute the difference between the tuple value and the condition value
-        if(cond[i].attr == 2){
-            diff = strcmp(value.c_str(), cond[i].value);
-            if((cond[i].comp==SelCond::LT && diff>=0)||
-              (cond[i].comp==SelCond::LE && diff>0) || 
-              (cond[i].comp==SelCond::GE && diff<0) ||
-              (cond[i].comp==SelCond::GT && diff>=0) ||
-              (cond[i].comp==SelCond::EQ && diff!=0) ||
-              (cond[i].comp==SelCond::NE && diff==0)){
-                valid_tuple = false;
-                break;
-            }
+
+      //if there is a need to look at value
+      if(attr == 2 || attr == 3 || condition_on_value){
+        if ((rc = rf.read(rid, key, value)) < 0) {
+          fprintf(stderr, "Error: while reading a tuple from table %s, %i\n", table.c_str(), rc);
+          goto exit_select;
+        }
+        for (int i = 0; i < cond.size(); i++) {
+          // compute the difference between the tuple value and the condition value
+          if(cond[i].attr == 2){
+              diff = strcmp(value.c_str(), cond[i].value);
+              if((cond[i].comp==SelCond::LT && diff>=0)||
+                (cond[i].comp==SelCond::LE && diff>0) || 
+                (cond[i].comp==SelCond::GE && diff<0) ||
+                (cond[i].comp==SelCond::GT && diff>=0) ||
+                (cond[i].comp==SelCond::EQ && diff!=0) ||
+                (cond[i].comp==SelCond::NE && diff==0)){
+                  valid_tuple = false;
+                  break;
+              }
+          }
         }
       }
       // the condition is met for the tuple.
