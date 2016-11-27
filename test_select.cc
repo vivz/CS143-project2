@@ -17,7 +17,6 @@ int main(){
 	std::vector<SelCond> cond;
 	cond.push_back(a);
 
-	
 	SqlEngine::select(1, "xsmall", cond);
 	return 0;
 }

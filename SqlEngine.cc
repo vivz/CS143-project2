@@ -65,6 +65,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   count = 0;
   //open the index file in 'r'
   rc = btree.open(indexFile, readMode);
+  btree.printEntries();
   //if the index file doesn't exist
   if (rc < 0) {
     rid.pid = rid.sid = 0;
