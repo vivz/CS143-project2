@@ -144,6 +144,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     int start_key = 0;
     int end_key = std::numeric_limits<int>::max();
     bool condition_on_value = false;
+    std::vector<int> NE_values;
 
     for (int i = 0; i < cond.size(); i++) {
       //Only check for key
@@ -167,6 +168,9 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       }
       else if (cond[i].comp == SelCond::LT){
         end_key = min(end_key, atoi(cond[i].value)-1);
+      }
+      else if (cond[i].comp == SelCond::NE){
+        NE_values.push_back(atoi(cond[i].value));
       }
     }
     //finalize the conditions
@@ -196,8 +200,16 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //*************************
     while(status == 0) {
       status = btree.readForward(indexCursor, key, rid);
+      
       if(key > end_key)
         break;
+
+      for(int i = 0; i<NE_values.size(); i++){
+        if(key==NE_values[i]){
+          NE_values.erase(NE_values.begin()+i);
+          continue;
+        }
+      }
 
       bool valid_tuple = true;
 
