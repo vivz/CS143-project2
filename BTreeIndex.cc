@@ -56,7 +56,7 @@ RC BTreeIndex::open(const string& indexname, char mode)
 		}
 		memcpy(&rootPid, buffer, sizeof(PageId)); 
 		memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
-		printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
+		//printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
 		return 0;
 
 	}else if(mode == 'w'){
@@ -73,7 +73,7 @@ RC BTreeIndex::open(const string& indexname, char mode)
 			}
 			memcpy(&rootPid, buffer, sizeof(PageId)); 
 			memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
-			printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
+			//printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
 			return 0;
 		}
 	}
@@ -88,7 +88,7 @@ RC BTreeIndex::open(const string& indexname, char mode)
  */
 RC BTreeIndex::close()
 {
-	printf("Writing to index file before closing:\nrootPid = %i, treeHeight = %i.\n", rootPid, treeHeight);
+	//printf("Writing to index file before closing:\nrootPid = %i, treeHeight = %i.\n", rootPid, treeHeight);
 	RC rc = writeVariables();
 	if(rc < 0)
 		return rc;
@@ -375,9 +375,6 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 	RC rc = current.read(cursor.pid, pf);
 	if(rc < 0)
 		return rc;
-
-	printf("hiiiii\n");
-	current.showEntries();
 	
 	RC rc2 = current.readEntry(cursor.eid, key, rid);
 	if(rc2 < 0)

@@ -173,18 +173,19 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //TODO: if no constrains on key, no need to access the tree;
     //if(start_key == -1 && end_key == -1)
 
+    ////////////////////////////
+    //locate the starting point 
+    ///////////////////////////
     //printf("start_key is %i, end_key is %i\n",start_key, end_key );
     btree.locate(start_key, indexCursor);
-    //printf("endRid is {pid: %i, sid: %i}\n", rf.endRid().pid, rf.endRid().sid);
-    printf("indexCursor is pid:%i, eid:%i\n", indexCursor.pid, indexCursor.eid);
     rc = btree.readForward(indexCursor, key, rid);
-    printf("rc is %i\n",rc);
-
-    //Keep finding
+    
+    ////////////////////////////
+    //iterate untill the end point
+    ///////////////////////////
     while(btree.readForward(indexCursor, key, rid)==0) {
       if(key > end_key)
         break;
-      printf("rid is {pid: %i, sid :%i}\n",rid.pid, rid.sid);
       // read the tuple
       if ((rc = rf.read(rid, key, value)) < 0) {
         fprintf(stderr, "Error: while reading a tuple from table %s, %i\n", table.c_str(), rc);
@@ -197,20 +198,18 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         // compute the difference between the tuple value and the condition value
         if(cond[i].attr == 2){
             diff = strcmp(value.c_str(), cond[i].value);
+            if((cond[i].comp==SelCond::LT && diff>=0)||
+              (cond[i].comp==SelCond::LE && diff>0) || 
+              (cond[i].comp==SelCond::GE && diff<0) ||
+              (cond[i].comp==SelCond::GT && diff>=0) ||
+              (cond[i].comp==SelCond::EQ && diff!=0) ||
+              (cond[i].comp==SelCond::NE && diff==0)){
+                valid_tuple = false;
+                break;
+            }
         }
-        if((cond[i].comp==SelCond::LT && diff>=0)||
-          (cond[i].comp==SelCond::LE && diff>0) || 
-          (cond[i].comp==SelCond::GE && diff<0) ||
-          (cond[i].comp==SelCond::GT && diff>=0) ||
-          (cond[i].comp==SelCond::EQ && diff!=0) ||
-          (cond[i].comp==SelCond::NE && diff==0)){
-          valid_tuple = false;
-          break;
-        }
-        
       }
       // the condition is met for the tuple.
-      // increase matching tuple counter
       if(valid_tuple){
         count++;
         // print the tuple
@@ -228,6 +227,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       }
     }
   }
+
   found_exit:
     // print matching tuple count if "select count(*)"
     if (attr == 4) {
