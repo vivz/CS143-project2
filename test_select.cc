@@ -7,8 +7,13 @@ using namespace std;
 int main(){
 	RC rc;
 	rc = SqlEngine::load("xsmall","xsmall.del", true);
+	rc = SqlEngine::load("small","small.del", true);
+	rc = SqlEngine::load("medium","medium.del", true);
+	rc = SqlEngine::load("large","large.del", true);
+	rc = SqlEngine::load("xlarge","xlarge.del", true);
+
 	if(rc < 0)
-		printf("there is an error\n");
+		printf("there is an error in LOAD\n");
 	SelCond a;
 	a.attr = 1;
 	a.comp = SelCond::LT;

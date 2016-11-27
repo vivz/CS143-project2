@@ -218,9 +218,6 @@ RC BTLeafNode::locate(int searchKey, int& eid) {
 RC BTLeafNode::readEntry(int eid, int& key, RecordId& rid){
 	if(eid < 0 || eid > getKeyCount()) {
 		return RC_NO_SUCH_RECORD;
-	} else if(buffer==NULL) {
-		//TODO: Make sure what should be returned here.
-		return -1;
 	} else {
 		LeafEntry *ptrEntry = (LeafEntry*)(buffer + sizeof(int)) + eid;
 		key = ptrEntry->key;
