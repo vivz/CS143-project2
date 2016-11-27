@@ -230,6 +230,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         }
       }
     }
+    btree.close();
   }
 
   found_exit:
