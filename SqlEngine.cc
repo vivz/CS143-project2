@@ -177,10 +177,10 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //************************
     //printf("start_key is %i, end_key is %i\n",start_key, end_key );
 
-    RC status;
+    RC status = 0;
     btree.locate(start_key, indexCursor);
     if(btree.isEmtpyLeaf(indexCursor.pid)){
-      status = btree.readForward(indexCursor, key, rid);
+      btree.readForward(indexCursor, key, rid);
     }
 
     //*************************

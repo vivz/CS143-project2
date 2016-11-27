@@ -29,9 +29,9 @@ int main(){
 	
 	std::vector<SelCond> cond;
 	
-	cond.push_back(a);
-	cond.push_back(b);
+	//cond.push_back(a);
+	//cond.push_back(b);
 
-	SqlEngine::select(3, "small", cond);
+	SqlEngine::select(4, "small", cond);
 	return 0;
 }
