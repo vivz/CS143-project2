@@ -6,14 +6,19 @@ using namespace std;
 
 int main(){
 	BTreeIndex btIndex;
+	RC rc ;
 
 	printf("welcome to test_index\n");
 	
-	btIndex.open("test1.idx", 'w');
+	rc = btIndex.open("test1.idx", 'r');
+	if(rc < 0 ){
+		printf("failed to open the index file\n");
+		return rc;
+	}
 
 	//read in from the record file
 	RecordFile rf;
-	RC rc = rf.open("test_unsorted.tbl", 'r');
+	rc = rf.open("test_unsorted.tbl", 'r');
 	if(rc < 0)
 		return rc;
 

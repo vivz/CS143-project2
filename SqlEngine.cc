@@ -62,7 +62,10 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
 
   // scan the table file from the beginning
   count = 0;
-  if (btree.open(indexFile, readMode)) {
+  //open the index file in 'r'
+  rc = btree.open(indexFile, readMode);
+  //if the index file doesn't exist
+  if (rc < 0) {
     rid.pid = rid.sid = 0;
     while (rid < rf.endRid()) {
       // read the tuple
@@ -128,39 +131,82 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         ++rid;
     }
   }
+  //if there exists the btree index
   else {
-    index = -1;
+    //index = -1;
     //Deal with cond
+    //TODO: fixing the logic here 
+    
+    int start_key = -1;
+    int end_key = -1;
+
     for (int i = 0; i < cond.size(); i++) {
-      //Only for key
+      //Only check for key
       if (cond[i].attr != 1) {
         continue;
       }
       //Found index
+      
       if (cond[i].comp == SelCond::EQ) {
+        start_key = cond[i].value;
+        end_key = cond[i].value;
+        /*
         index = i;
         break;
+        */
       }
-      //
+      else if (cond[i].comp == SelCond::GE){
+        start_key = max(start_key, cond[i].value);
+      }
+      else if (cond[i].comp == SelCond::LE){
+        end_key = min(end_key, cond[i].value);
+      }
+      else if (cond[i].comp == SelCond::GT){
+        start_key = max(start_key, cond[i].value+1);
+      }
+      else if (cond[i].comp == SelCond::LT){
+        end_key = mix(end_key, cond[i].value-1);
+      }
+      
+      /*
       if ((cond[i].comp == SelCond::GT || cond[i].comp == SelCond::GE) &&
           (index == -1 || atoi(cond[i].value) > atoi(cond[index].value))) {
         index = i;
-      }
+      }*/
     }
-
+    //finalize the conditions
+    if(start_key > end_key){
+        //TODO: do we need to return no such record? 
+        rc = RC_NO_SUCH_RECORD;
+        btree.close();
+        goto found_exit;
+        break;
+    }
+    //TODO: if no constrains on key, no need to access the tree;
+    //if(start_key == -1 && end_key == -1)
+    if(start_key == -1){
+      start_key = 0;
+    }
+    if(end_key == -1){
+      end_key = INT_MAX;
+    }
     //Initialization
     count = 0;
     rid.pid = rid.sid = 0;
     indexCursor.pid = btree.getRootPid();
     //Check index part
+    /*
     if (index > -1) {
       btree.locate(atoi(cond[index].value), indexCursor);
     }
     else {
       btree.locate(0, indexCursor);
-    }
+    }*/
+    btree.locate(start_key, indexCursor);
     //Keep finding
     while(btree.readForward(indexCursor, key, rid)==0) {
+      if(key > end_key)
+        break;
       // read the tuple
       if ((rc = rf.read(rid, key, value)) < 0) {
         fprintf(stderr, "Error: while reading a tuple from table %s\n", table.c_str());
@@ -170,6 +216,10 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       // check the conditions on the tuple
       for (int i = 0; i < cond.size(); i++) {
         // compute the difference between the tuple value and the condition value
+        if(cond[i].attr == 2){
+            diff = strcmp(value.c_str(), cond[i].value);
+        }
+        /*
         switch (cond[i].attr) {
           case 1:
             diff = key - atoi(cond[i].value);
@@ -177,34 +227,34 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
           case 2:
             diff = strcmp(value.c_str(), cond[i].value);
             break;
-        }
-
+        }*/
+        
         // Deal with conditions
         switch (cond[i].comp) {
           //Less than
           case SelCond::LT:
             if (diff >= 0) {
-              if (cond[i].attr == 1) 
-                goto found_exit;
-              else 
+              //if (cond[i].attr == 1) 
+                //goto found_exit;
+              //else 
                 continue;
             }
             break;
           //Less equal
           case SelCond::LE:
             if (diff > 0) {
-              if (cond[i].attr == 1) 
-                goto found_exit;
-              else 
+              //if (cond[i].attr == 1) 
+               // goto found_exit;
+              //else 
                 continue;
             }
             break;
           //Equal
           case SelCond::EQ:
             if (diff != 0) {
-              if (cond[i].attr == 1) 
-                goto found_exit;
-              else 
+              //if (cond[i].attr == 1) 
+               // goto found_exit;
+              //else 
                 continue;
             }
             break;
