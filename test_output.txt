@@ -1,57 +1,31 @@
-Bruinbase> Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Read from xsmall.idx:
-rootPid = 3, treeHeight = 1.
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-8
-Bruinbase> Read from xsmall.idx:
-rootPid = 3, treeHeight = 1.
-272 'Baby Take a Bow'
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 5 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 9 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 5 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 16 pages
+  -- 0.000 seconds to run the select command. Read 16 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 6 pages
+  -- 0.000 seconds to run the select command. Read 71 pages
+Bruinbase> Bruinbase> 8
+Bruinbase> 272 'Baby Take a Bow'
 1578 'G.I. Blues'
 2244 'King Creole'
 2342 'Last Ride, The'
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Bruinbase> Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Read from small.idx:
-rootPid = 3, treeHeight = 1.
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-50
-Bruinbase> Read from small.idx:
-rootPid = 3, treeHeight = 1.
-173 'Angel Levine, The'
+Bruinbase> Bruinbase> Bruinbase> 50
+Bruinbase> 173 'Angel Levine, The'
 175 'Angel Unchained'
 272 'Baby Take a Bow'
 303 'Bananas'
 395 'Big Jake'
 489 'Blue Hawaii'
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Bruinbase> Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Read from medium.idx:
-rootPid = 3, treeHeight = 1.
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-100
-Bruinbase> Read from medium.idx:
-rootPid = 3, treeHeight = 1.
-489 'Blue Hawaii'
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Bruinbase> Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Read from large.idx:
-rootPid = 3, treeHeight = 1.
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-1000
-Bruinbase> Read from large.idx:
-rootPid = 3, treeHeight = 1.
-4506 'Waterworld'
+Bruinbase> Bruinbase> Bruinbase> 100
+Bruinbase> 489 'Blue Hawaii'
+Bruinbase> Bruinbase> Bruinbase> 1000
+Bruinbase> 4506 'Waterworld'
 4515 'Wedding Party, The'
 4524 'Welcome to the Dollhouse'
 4531 'Wharf Rat, The'
@@ -80,11 +54,7 @@ rootPid = 3, treeHeight = 1.
 4727 'Sabrina, the Teenage Witch'
 4732 '¡Dispara!'
 4733 'la folie'
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Read from large.idx:
-rootPid = 3, treeHeight = 1.
-4506 'Waterworld'
+Bruinbase> 4506 'Waterworld'
 4515 'Wedding Party, The'
 4524 'Welcome to the Dollhouse'
 4531 'Wharf Rat, The'
@@ -113,23 +83,9 @@ rootPid = 3, treeHeight = 1.
 4727 'Sabrina, the Teenage Witch'
 4732 '¡Dispara!'
 4733 'la folie'
-Writing to index file before closing:
-rootPid = 3, treeHeight = 1.
-Bruinbase> Bruinbase> Writing to index file before closing:
-rootPid = 131, treeHeight = 2.
-Bruinbase> Read from xlarge.idx:
-rootPid = 131, treeHeight = 2.
-Writing to index file before closing:
-rootPid = 131, treeHeight = 2.
-12278
-Bruinbase> Read from xlarge.idx:
-rootPid = 131, treeHeight = 2.
-4240 'Tommy Boy'
-Writing to index file before closing:
-rootPid = 131, treeHeight = 2.
-Bruinbase> Read from xlarge.idx:
-rootPid = 131, treeHeight = 2.
-402 'Big Squeeze, The'
+Bruinbase> Bruinbase> Bruinbase> 12278
+Bruinbase> 4240 'Tommy Boy'
+Bruinbase> 402 'Big Squeeze, The'
 403 'Big Tease, The'
 405 'Bigfoot: The Unforgettable Encounter'
 407 'Biker Zombies'
@@ -193,6 +149,4 @@ rootPid = 131, treeHeight = 2.
 492 'Blue Ridge Fall'
 493 'Blues Brothers 2000'
 496 'Bobby G. Cant Swim'
-Writing to index file before closing:
-rootPid = 131, treeHeight = 2.
 Bruinbase> Bruinbase> 
