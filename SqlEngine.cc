@@ -56,6 +56,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   const char readMode = 'r';
 
   // open the table file
+
   if ((rc = rf.open(table + ".tbl", 'r')) < 0) {
     fprintf(stderr, "Error: table %s does not exist\n", table.c_str());
     return rc;
@@ -180,7 +181,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         goto found_exit;
     }
     //if no constrains on key, no need to access the tree;
-    if(start_key == 0 && end_key == std::numeric_limits<int>::max()) {
+    if(start_key == 0 && end_key == std::numeric_limits<int>::max()){
       goto no_btree;
     }
 
@@ -199,6 +200,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //iterate untill the end point
     //*************************
     while(status == 0) {
+      fprintf(stdout, "IndexCursor.pid: %d\nIndexCursor.eid: %d\n", indexCursor.pid, indexCursor.eid);
       status = btree.readForward(indexCursor, key, rid);
       
       if(key > end_key)
@@ -238,6 +240,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       // the condition is met for the tuple.
       if(valid_tuple){
         count++;
+        fprintf(stdout, "rid.pid: %d\nrid.sid: %d\n", rid.pid, rid.sid);
         // print the tuple
         switch (attr) {
           case 1:  // SELECT key
