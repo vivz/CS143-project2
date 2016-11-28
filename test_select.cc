@@ -6,9 +6,8 @@ using namespace std;
 
 int main(){
 	RC rc;
-	//17 read count
-	//rc = SqlEngine::load("xsmall","xsmall.del", true);
-	//rc = SqlEngine::load("xlarge","xlarge.del", true);
+
+	rc = SqlEngine::load("xsmall","xsmall.del", true);
 	//rc = SqlEngine::load("small","small.del", true);
 	//rc = SqlEngine::load("medium","medium.del", true);
 	//rc = SqlEngine::load("large","large.del", true);
