@@ -19,8 +19,8 @@ int main(){
 	
 	SelCond a;
 	a.attr = 1;
-	a.comp = SelCond::LT;
-	string a_value = "2500";
+	a.comp = SelCond::GT;
+	string a_value = "4000";
 	a.value = (char*)a_value.c_str();
 /*
 	SelCond b;

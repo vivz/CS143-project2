@@ -2,6 +2,10 @@ LOAD xsmall FROM 'xsmall.del' WITH INDEX
 SELECT COUNT(*) FROM xsmall
 SELECT * FROM xsmall WHERE key < 2500
 
+SELECT * FROM xsmall WHERE key > 4000
+SELECT * FROM xsmall WHERE key <> 272
+SELECT * FROM xsmall WHERE key = 272 AND key <> 272
+
 LOAD small FROM 'small.del' WITH INDEX
 SELECT COUNT(*) FROM small
 SELECT * FROM small WHERE key > 100 AND key < 500
