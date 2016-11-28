@@ -11,6 +11,7 @@
 #include "BTreeNode.h"
 #include <stdio.h>
 #include <string.h>
+#include <limits>
 
 using namespace std;
 
@@ -23,11 +24,21 @@ BTreeIndex::BTreeIndex()
 
     rootPid = -1;
     treeHeight = 0;
+    min_key = std::numeric_limits<int>::max();
+    max_key = std::numeric_limits<int>::min();
 
 }
 
 PageId BTreeIndex::getRootPid() {
 	return rootPid;
+}
+
+PageId BTreeIndex::getMinKey() {
+	return min_key;
+}
+
+int BTreeIndex::getMaxKey() {
+	return max_key;
 }
 
 int BTreeIndex::setTreeHeight(int height) { 
@@ -56,6 +67,8 @@ RC BTreeIndex::open(const string& indexname, char mode)
 		}
 		memcpy(&rootPid, buffer, sizeof(PageId)); 
 		memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
+		memcpy(&min_key, buffer+sizeof(PageId)+sizeof(int), sizeof(int));
+		memcpy(&max_key, buffer+sizeof(PageId)+sizeof(int)*2, sizeof(int));
 		//printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
 		return 0;
 
@@ -65,6 +78,8 @@ RC BTreeIndex::open(const string& indexname, char mode)
     		memset(buffer, 0, PageFile::PAGE_SIZE); 
 			memcpy(buffer, &rootPid, sizeof(PageId)); 
 			memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int));
+			memcpy(buffer+sizeof(PageId)+sizeof(int), &min_key, sizeof(int));
+			memcpy(buffer+sizeof(PageId)+sizeof(int)*2, &max_key, sizeof(int));
 			pf.write(0, buffer);
 		}else{
 
@@ -73,6 +88,8 @@ RC BTreeIndex::open(const string& indexname, char mode)
 			}
 			memcpy(&rootPid, buffer, sizeof(PageId)); 
 			memcpy(&treeHeight, buffer+sizeof(PageId), sizeof(int));
+			memcpy(&min_key, buffer+sizeof(PageId)+sizeof(int), sizeof(int));
+			memcpy(&max_key, buffer+sizeof(PageId)+sizeof(int)*2, sizeof(int));
 			//printf("Read from %s:\nrootPid = %i, treeHeight = %i.\n", indexname.c_str(), rootPid, treeHeight);
 			return 0;
 		}
@@ -144,21 +161,14 @@ RC BTreeIndex::writeVariables()
 {
 	memcpy(buffer, &rootPid, sizeof(PageId));
 	memcpy(buffer+sizeof(PageId), &treeHeight, sizeof(int));
+	memcpy(buffer+sizeof(PageId)+sizeof(int), &min_key, sizeof(int));
+	memcpy(buffer+sizeof(PageId)+sizeof(int)*2, &max_key, sizeof(int));
+
 	if( pf.write(0, buffer) < 0) {
 		return RC_FILE_WRITE_FAILED;
 	}
 	else 
 		return 0;
-}
-
-bool BTreeIndex::isEmtpyLeaf(PageId pid){
-	BTLeafNode leaf;
-	leaf.read(pid, pf);
-	if(leaf.getKeyCount()==0){
-		return true;
-	}else{
-		return false;
-	}
 }
 
 
@@ -171,6 +181,10 @@ bool BTreeIndex::isEmtpyLeaf(PageId pid){
 RC BTreeIndex::insert(int key, const RecordId& rid)
 {
 	//index file is empty
+
+	min_key = min(min_key, key);
+	max_key = max(max_key, key);
+
 	if (treeHeight== 0){
 		
 		BTLeafNode small;
@@ -230,7 +244,6 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	BTNonLeafNode node;
 	node.read(current_pid, pf);
 	RC rc = 0;
-
 	//base case: leaf nodes
 	if(level == treeHeight){
 		rc = insertLeaf(toInsert, current_pid, overflow, has_overflow);

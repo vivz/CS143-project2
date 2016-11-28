@@ -99,7 +99,9 @@ class BTreeIndex {
    */
   RC readForward(IndexCursor& cursor, int& key, RecordId& rid);
 
-  bool isEmtpyLeaf(PageId pid);
+  int getMaxKey();
+  int getMinKey();
+
   //testing 
   RC printEntries();
 
@@ -117,6 +119,8 @@ class BTreeIndex {
   char buffer[PageFile::PAGE_SIZE];
   PageId   rootPid;    /// the PageId of the root node
   int      treeHeight; /// the height of the tree
+  int      min_key;
+  int      max_key;
   /// Note that the content of the above two variables will be gone when
   /// this class is destructed. Make sure to store the values of the two 
   /// variables in disk, so that they can be reconstructed when the index
