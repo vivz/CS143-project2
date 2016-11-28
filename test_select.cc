@@ -19,20 +19,27 @@ int main(){
 	
 	SelCond a;
 	a.attr = 1;
-	a.comp = SelCond::GT;
-	string a_value = "4000";
+	a.comp = SelCond::EQ;
+	string a_value = "272";
 	a.value = (char*)a_value.c_str();
-/*
+
 	SelCond b;
-	b.attr = 1;
-	b.comp = SelCond::LT;
-	string b_value = "500";
-	b.value = (char*)b_value.c_str();*/
+	b.attr = 2;
+	b.comp = SelCond::EQ;
+	string b_value = "Baby Take a Bow";
+	b.value = (char*)b_value.c_str();
+
+	SelCond c;
+	c.attr = 2;
+	c.comp = SelCond::NE;
+	string c_value = "Baby Take a Bow";
+	c.value = (char*)c_value.c_str();
 	
 	std::vector<SelCond> cond;
 	
 	cond.push_back(a);
-	//cond.push_back(b);
+	cond.push_back(b);
+	cond.push_back(c);
 
 	SqlEngine::select(3, "xsmall", cond);
 	return 0;

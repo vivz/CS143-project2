@@ -174,27 +174,35 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
         NE_values.push_back(atoi(cond[i].value));
       }
     }
+
+    //*************************
     //finalize the conditions
-    if(start_key > end_key){
-        rc = RC_NO_SUCH_RECORD;
-        btree.close();
-        goto found_exit;
-    }
+    //*************************
     //if no constrains on key, no need to access the tree;
     if(start_key == 0 && end_key == std::numeric_limits<int>::max()){
       goto no_btree;
     }
 
+    start_key = max(start_key, btree.getMinKey());
+    end_key = min(end_key, btree.getMaxKey());
+
+    if(start_key > end_key){
+        rc = RC_NO_SUCH_RECORD;
+        btree.close();
+        goto found_exit;
+    }
     //************************
     //locate the starting point 
     //************************
     //printf("start_key is %i, end_key is %i\n",start_key, end_key );
 
     RC status = 0;
+
     rc = btree.locate(start_key, indexCursor);
+    /*
     if (btree.isEmtpyLeaf(indexCursor.pid)){
-      btree.readForward(indexCursor, key, rid);
-    }
+      status = btree.readForward(indexCursor, key, rid);
+    }*/
 
     //*************************
     //iterate untill the end point
@@ -202,10 +210,10 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     while(status == 0) {
       //fprintf(stdout, "IndexCursor.pid: %d\nIndexCursor.eid: %d\n", indexCursor.pid, indexCursor.eid);
       status = btree.readForward(indexCursor, key, rid);
-      
+
       if(status == RC_INVALID_CURSOR)
         break;
-      
+
       if(key > end_key)
         break;
 
