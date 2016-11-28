@@ -1,3 +1,15 @@
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 4 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 9 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 5 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 16 pages
+  -- 0.000 seconds to run the select command. Read 16 pages
+  -- 0.000 seconds to run the select command. Read 2 pages
+  -- 0.000 seconds to run the select command. Read 6 pages
+  -- 0.000 seconds to run the select command. Read 71 pages
 Bruinbase> Bruinbase> 8
 Bruinbase> 272 'Baby Take a Bow'
 1578 'G.I. Blues'
