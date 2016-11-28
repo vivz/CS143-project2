@@ -9,15 +9,14 @@
   -- 0.000 seconds to run the select command. Read 16 pages
   -- 0.000 seconds to run the select command. Read 2 pages
   -- 0.000 seconds to run the select command. Read 6 pages
-  -- 0.000 seconds to run the select command. Read 71 pages
+  -- 0.000 seconds to run the select command. Read 70 pages
 Bruinbase> Bruinbase> 8
 Bruinbase> 272 'Baby Take a Bow'
 1578 'G.I. Blues'
 2244 'King Creole'
 2342 'Last Ride, The'
 Bruinbase> Bruinbase> Bruinbase> 50
-Bruinbase> 173 'Angel Levine, The'
-175 'Angel Unchained'
+Bruinbase> 175 'Angel Unchained'
 272 'Baby Take a Bow'
 303 'Bananas'
 395 'Big Jake'
@@ -25,8 +24,7 @@ Bruinbase> 173 'Angel Levine, The'
 Bruinbase> Bruinbase> Bruinbase> 100
 Bruinbase> 489 'Blue Hawaii'
 Bruinbase> Bruinbase> Bruinbase> 1000
-Bruinbase> 4506 'Waterworld'
-4515 'Wedding Party, The'
+Bruinbase> 4515 'Wedding Party, The'
 4524 'Welcome to the Dollhouse'
 4531 'Wharf Rat, The'
 4546 'When Night Is Falling'
@@ -54,8 +52,7 @@ Bruinbase> 4506 'Waterworld'
 4727 'Sabrina, the Teenage Witch'
 4732 '¡Dispara!'
 4733 'la folie'
-Bruinbase> 4506 'Waterworld'
-4515 'Wedding Party, The'
+Bruinbase> 4515 'Wedding Party, The'
 4524 'Welcome to the Dollhouse'
 4531 'Wharf Rat, The'
 4546 'When Night Is Falling'
@@ -85,8 +82,7 @@ Bruinbase> 4506 'Waterworld'
 4733 'la folie'
 Bruinbase> Bruinbase> Bruinbase> 12278
 Bruinbase> 4240 'Tommy Boy'
-Bruinbase> 402 'Big Squeeze, The'
-403 'Big Tease, The'
+Bruinbase> 403 'Big Tease, The'
 405 'Bigfoot: The Unforgettable Encounter'
 407 'Biker Zombies'
 408 'Bikini Bistro'
