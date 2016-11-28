@@ -213,17 +213,18 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       if(key > end_key)
         break;
 
+      bool valid_tuple = true;
+
       for(int i = 0; i<NE_values.size(); i++){
         if(key==NE_values[i]){
           NE_values.erase(NE_values.begin()+i);
-          continue;
+          valid_tuple = false;
+          break;
         }
       }
 
-      bool valid_tuple = true;
-
       //if there is a need to look at value
-      if(attr == 2 || attr == 3 || condition_on_value){
+      if(valid_tuple && (attr == 2 || attr == 3 || condition_on_value)){
         if ((rc = rf.read(rid, key, value)) < 0) {
           fprintf(stderr, "Error: while reading a tuple from table %s, %i\n", table.c_str(), rc);
           goto exit_select;
