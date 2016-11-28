@@ -191,7 +191,7 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
 
     RC status = 0;
     rc = btree.locate(start_key, indexCursor);
-    if (rc < 0){
+    if (btree.isEmtpyLeaf(indexCursor.pid)){
       btree.readForward(indexCursor, key, rid);
     }
 
