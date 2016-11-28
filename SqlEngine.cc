@@ -54,22 +54,22 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   int    index;
   const string indexFile = table + ".idx";
   const char readMode = 'r';
+  bool openRF = false;
+  bool openBtree = false;
 
-  // open the table file
-
-  if ((rc = rf.open(table + ".tbl", 'r')) < 0) {
-    fprintf(stderr, "Error: table %s does not exist\n", table.c_str());
-    return rc;
-  }
 
   // scan the table file from the beginning
   count = 0;
-  //open the index file in 'r'
-  rc = btree.open(indexFile, readMode);
-  //if the index file doesn't exist
-  if (rc < 0) {
   
+  //if the index file doesn't exist
+  if (rc < 0) { 
   no_btree:
+    // open the table file
+    if ((rc = rf.open(table + ".tbl", 'r')) < 0) {
+      fprintf(stderr, "Error: table %s does not exist\n", table.c_str());
+      return rc;
+    }
+    openRF = true;
     rid.pid = rid.sid = 0;
     while (rid < rf.endRid()) {
       if(cond.size()>0 || attr!=4 ){
@@ -186,6 +186,14 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       goto no_btree;
     }
 
+
+    //open the index file in 'r'
+    if (!openBtree){
+      rc = btree.open(indexFile, readMode);
+      openBtree = true;
+    }
+    
+
     start_key = max(start_key, btree.getMinKey());
     end_key = min(end_key, btree.getMaxKey());
 
@@ -213,9 +221,11 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     while(status == 0) {
       //fprintf(stdout, "IndexCursor.pid: %d\nIndexCursor.eid: %d\n", indexCursor.pid, indexCursor.eid);
       status = btree.readForward(indexCursor, key, rid);
-
+      
+      //TODO: Check if this is needed
+      /*
       if(status == RC_INVALID_CURSOR)
-        break;
+        break;*/
 
       if(key > end_key)
         break;
@@ -232,6 +242,15 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
 
       //if there is a need to look at value
       if(valid_tuple && (attr == 2 || attr == 3 || condition_on_value)) {
+        if(!openRF) {
+          // open the table file
+          if ((rc = rf.open(table + ".tbl", 'r')) < 0) {
+            fprintf(stderr, "Error: table %s does not exist\n", table.c_str());
+            return rc;
+          }
+          openRF = true;
+        }
+
         if ((rc = rf.read(rid, key, value)) < 0) {
           fprintf(stderr, "Error: while reading a tuple from table %s, %i\n", table.c_str(), rc);
           goto exit_select;

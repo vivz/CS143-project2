@@ -19,7 +19,7 @@ int main(){
 	SelCond a;
 	a.attr = 1;
 	a.comp = SelCond::GT;
-	string a_value = "500";
+	string a_value = "4000";
 	a.value = (char*)a_value.c_str();
 
 	SelCond b;
@@ -37,7 +37,7 @@ int main(){
 	std::vector<SelCond> cond;
 	
 	cond.push_back(a);
-	cond.push_back(b);
+	//cond.push_back(b);
 	//cond.push_back(c);
 
 	SqlEngine::select(3, "xsmall", cond);
