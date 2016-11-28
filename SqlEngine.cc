@@ -155,8 +155,11 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
       }
       //Found index
       if (cond[i].comp == SelCond::EQ) {
-        start_key = atoi(cond[i].value);
-        end_key = atoi(cond[i].value);
+        int tempVal = atoi(cond[i].value);
+        if(tempVal > end_key || tempVal < start_key)
+          goto exit_select;
+        start_key = tempVal;
+        end_key = tempVal;
       }
       else if (cond[i].comp == SelCond::GE){
         start_key = max(start_key, atoi(cond[i].value));
