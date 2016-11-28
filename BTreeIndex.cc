@@ -186,7 +186,7 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 	max_key = max(max_key, key);
 
 	if (treeHeight== 0){
-		
+		/*
 		BTLeafNode small;
 		PageId small_pid = pf.endPid();
 		if(small.write(small_pid, pf)<0)
@@ -206,6 +206,11 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		rootPid = pf.endPid();
 		root.initializeRoot(small_pid, key, big_pid);
 		if( root.write(rootPid, pf)<0)
+			return RC_FILE_WRITE_FAILED;*/
+		BTLeafNode root;
+		rootPid = pf.endPid();
+		root.insert(key, rid);
+		if( root.write(rootPid, pf)<0)
 			return RC_FILE_WRITE_FAILED;
 
 		treeHeight = 1;
@@ -220,7 +225,7 @@ RC BTreeIndex::insert(int key, const RecordId& rid)
 		// valid assignment???
 		toInsert.rid = rid;
 
-		RC rc = insertNonLeaf(toInsert, rootPid, 0, overflow, has_overflow);
+		RC rc = insertNonLeaf(toInsert, rootPid, 1, overflow, has_overflow);
 		if(rc < 0)
 			return rc;
 
@@ -349,7 +354,7 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
  */
 RC BTreeIndex::locate(int searchKey, IndexCursor& cursor)
 {
-	return locateHelper(searchKey, rootPid, 0, cursor);
+	return locateHelper(searchKey, rootPid, 1, cursor);
 }
 
 

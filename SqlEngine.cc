@@ -54,12 +54,73 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   int    index;
   const string indexFile = table + ".idx";
   const char readMode = 'r';
+  
   bool openRF = false;
-  bool openBtree = false;
-
+  int start_key = 0;
+  int end_key = std::numeric_limits<int>::max();
+  bool condition_on_value = false;
+  std::vector<int> NE_values;
 
   // scan the table file from the beginning
   count = 0;
+
+  /**************Condition Check Start****************/
+  //************************
+  //Find the range for keys
+  //************************
+
+  for (int i = 0; i < cond.size(); i++) {
+    //Only check for key
+    if (cond[i].attr != 1) {
+      condition_on_value = true;
+      continue;
+    }
+    //Found index
+    if (cond[i].comp == SelCond::EQ) {
+      int tempVal = atoi(cond[i].value);
+      if(tempVal > end_key || tempVal < start_key)
+        goto exit_select;
+      start_key = tempVal;
+      end_key = tempVal;
+    }
+    else if (cond[i].comp == SelCond::GE){
+      start_key = max(start_key, atoi(cond[i].value));
+    }
+    else if (cond[i].comp == SelCond::LE){
+      end_key = min(end_key, atoi(cond[i].value));
+    }
+    else if (cond[i].comp == SelCond::GT){
+      start_key = max(start_key, atoi(cond[i].value)+1);
+    }
+    else if (cond[i].comp == SelCond::LT){
+      end_key = min(end_key, atoi(cond[i].value)-1);
+    }
+    else if (cond[i].comp == SelCond::NE){
+      NE_values.push_back(atoi(cond[i].value));
+    }
+  }
+
+  //*************************
+  //finalize the conditions
+  //*************************
+  //if no constrains on key, no need to access the tree;
+  if(start_key == 0 && end_key == std::numeric_limits<int>::max()){
+    goto no_btree;
+  }
+  
+  //Open btree
+  //open the index file in 'r'
+  rc = btree.open(indexFile, readMode);
+
+  start_key = max(start_key, btree.getMinKey());
+  end_key = min(end_key, btree.getMaxKey());
+
+  if(start_key > end_key){
+      rc = RC_NO_SUCH_RECORD;
+      btree.close();
+      goto found_exit;
+  }
+/*****************Condition check End ***********************/
   
   //if the index file doesn't exist
   if (rc < 0) { 
@@ -139,69 +200,6 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   }
   //if there exists the btree index
   else {
-    //************************
-    //Find the range for keys
-    //************************
-    int start_key = 0;
-    int end_key = std::numeric_limits<int>::max();
-    bool condition_on_value = false;
-    std::vector<int> NE_values;
-
-    for (int i = 0; i < cond.size(); i++) {
-      //Only check for key
-      if (cond[i].attr != 1) {
-        condition_on_value = true;
-        continue;
-      }
-      //Found index
-      if (cond[i].comp == SelCond::EQ) {
-        int tempVal = atoi(cond[i].value);
-        if(tempVal > end_key || tempVal < start_key)
-          goto exit_select;
-        start_key = tempVal;
-        end_key = tempVal;
-      }
-      else if (cond[i].comp == SelCond::GE){
-        start_key = max(start_key, atoi(cond[i].value));
-      }
-      else if (cond[i].comp == SelCond::LE){
-        end_key = min(end_key, atoi(cond[i].value));
-      }
-      else if (cond[i].comp == SelCond::GT){
-        start_key = max(start_key, atoi(cond[i].value)+1);
-      }
-      else if (cond[i].comp == SelCond::LT){
-        end_key = min(end_key, atoi(cond[i].value)-1);
-      }
-      else if (cond[i].comp == SelCond::NE){
-        NE_values.push_back(atoi(cond[i].value));
-      }
-    }
-
-    //*************************
-    //finalize the conditions
-    //*************************
-    //if no constrains on key, no need to access the tree;
-    if(start_key == 0 && end_key == std::numeric_limits<int>::max()){
-      goto no_btree;
-    }
-
-
-    //open the index file in 'r'
-    if (!openBtree){
-      rc = btree.open(indexFile, readMode);
-      openBtree = true;
-    }
-    
-
-    start_key = max(start_key, btree.getMinKey());
-    end_key = min(end_key, btree.getMaxKey());
-
-    if(start_key > end_key){
-        rc = RC_NO_SUCH_RECORD;
-        btree.close();
-        goto found_exit;
-    }
     //************************
     //locate the starting point 
     //************************

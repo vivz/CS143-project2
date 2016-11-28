@@ -7,7 +7,7 @@ using namespace std;
 int main(){
 	RC rc;
 
-	//rc = SqlEngine::load("xsmall","xsmall.del", true);
+	rc = SqlEngine::load("xsmall","xsmall.del", true);
 	//rc = SqlEngine::load("small","small.del", true);
 	//rc = SqlEngine::load("medium","medium.del", true);
 	//rc = SqlEngine::load("large","large.del", true);
@@ -18,8 +18,8 @@ int main(){
 	
 	SelCond a;
 	a.attr = 1;
-	a.comp = SelCond::GT;
-	string a_value = "4000";
+	a.comp = SelCond::LT;
+	string a_value = "2500";
 	a.value = (char*)a_value.c_str();
 
 	SelCond b;
@@ -36,10 +36,10 @@ int main(){
 	
 	std::vector<SelCond> cond;
 	
-	cond.push_back(a);
+	//cond.push_back(a);
 	//cond.push_back(b);
 	//cond.push_back(c);
 
-	SqlEngine::select(3, "xsmall", cond);
+	//SqlEngine::select(3, "xsmall", cond);
 	return 0;
 }
