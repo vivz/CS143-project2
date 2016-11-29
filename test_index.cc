@@ -10,8 +10,8 @@ int main(){
 
 	printf("welcome to test_index\n");
 	RecordId rid;
-	/*
-	rc = btIndex.open("test1.idx", 'r');
+	
+	rc = btIndex.open("xsmall.idx", 'r');
 	if(rc < 0 ){
 		printf("failed to open the index file\n");
 		return rc;
@@ -45,16 +45,16 @@ int main(){
 
 		rc = btIndex.insert(key, rid);
 		printf("btIndex.insert() returned %i\n", rc);
-	}*/
+	}
 
 	//search
 	
-	//btIndex.close();
+	btIndex.close();
 	btIndex.open("xsmall.idx", 'r');
 
 	IndexCursor ic;
 	int searchkey = 0;
-	/*
+	
 	for(searchkey = 1000; searchkey<1015; searchkey++){
 		rc = btIndex.locate(searchkey, ic);
 		if(rc<0){
@@ -63,7 +63,7 @@ int main(){
 			printf("entry %i is at pid: %i, eid: %i\n", searchkey, ic.pid, ic.eid);
 		}
 	}
-	*/
+	
 	
 	rc = btIndex.locate(searchkey, ic);
 	//int i = 0;
