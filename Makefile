@@ -11,7 +11,7 @@ SqlParser.tab.c: SqlParser.y
 	bison -d -psql $<
 
 clean:
-	rm -f bruinbase bruinbase.exe *.o *~ lex.sql.c SqlParser.tab.c SqlParser.tab.h test_leaf test_nonleaf test_index test_bindex test1.idx test_select test_unsorted.tbl xlarge.idx xlarge.tbl small.idx small.tbl medium.idx medium.tbl large.idx large.tbl test_node test_unsorted test.idx test2.idx test.tbl nonleaf.txt difference.txt
+	rm -f bruinbase bruinbase.exe *.o *~ lex.sql.c SqlParser.tab.c SqlParser.tab.h test_leaf test_nonleaf test_index test_bindex test1.idx test_select xlarge.idx xlarge.tbl small.idx small.tbl medium.idx medium.tbl xsmall.tbl test_unsorted.tbl xsmall.idx large.idx large.tbl test_node test_unsorted.idx test_unsorted test.idx test2.idx test.tbl nonleaf.txt difference.txt
 
 
 LEAF = test_leaf.cc SqlParser.tab.c lex.sql.c SqlEngine.cc BTreeIndex.cc BTreeNode.cc RecordFile.cc PageFile.cc 

@@ -216,7 +216,7 @@ RC BTLeafNode::locate(int searchKey, int& eid) {
  * @return 0 if successful. Return an error code if there is an error.
  */
 RC BTLeafNode::readEntry(int eid, int& key, RecordId& rid){
-	if(eid < 0 || eid > getKeyCount()) {
+	if(eid < 0 || eid >= getKeyCount()) {
 		return RC_NO_SUCH_RECORD;
 	} else {
 		LeafEntry *ptrEntry = (LeafEntry*)(buffer + sizeof(int)) + eid;

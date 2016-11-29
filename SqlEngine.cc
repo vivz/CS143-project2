@@ -203,27 +203,25 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //************************
     //locate the starting point 
     //************************
-    //printf("start_key is %i, end_key is %i\n",start_key, end_key );
-
     RC status = 0;
 
     rc = btree.locate(start_key, indexCursor);
-    /*
-    if (btree.isEmtpyLeaf(indexCursor.pid)){
-      status = btree.readForward(indexCursor, key, rid);
-    }*/
-
+    
     //*************************
     //iterate untill the end point
     //*************************
+
+    bool first_iteration = true;
+
     while(status == 0) {
-      //fprintf(stdout, "IndexCursor.pid: %d\nIndexCursor.eid: %d\n", indexCursor.pid, indexCursor.eid);
       status = btree.readForward(indexCursor, key, rid);
       
-      //TODO: Check if this is needed
-      /*
-      if(status == RC_INVALID_CURSOR)
-        break;*/
+      if(first_iteration){
+        if(status == RC_INVALID_CURSOR ){
+          btree.readForward(indexCursor, key, rid);
+        }
+        first_iteration = false;
+      }
 
       if(key > end_key)
         break;
