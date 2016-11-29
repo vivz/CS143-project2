@@ -112,14 +112,6 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
   //open the index file in 'r'
   rc = btree.open(indexFile, readMode);
 
-  start_key = max(start_key, btree.getMinKey());
-  end_key = min(end_key, btree.getMaxKey());
-
-  if(start_key > end_key){
-      rc = RC_NO_SUCH_RECORD;
-      btree.close();
-      goto found_exit;
-  }
 /*****************Condition check End ***********************/
   
   //if the index file doesn't exist
@@ -204,6 +196,16 @@ RC SqlEngine::select(int attr, const string& table, const vector<SelCond>& cond)
     //locate the starting point 
     //************************
     RC status = 0;
+
+    start_key = max(start_key, btree.getMinKey());
+    end_key = min(end_key, btree.getMaxKey());
+
+    if(start_key > end_key){
+      rc = RC_NO_SUCH_RECORD;
+      btree.close();
+      goto found_exit;
+    }
+
 
     rc = btree.locate(start_key, indexCursor);
     

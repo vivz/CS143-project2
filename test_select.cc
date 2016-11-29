@@ -7,19 +7,19 @@ using namespace std;
 int main(){
 	RC rc;
 
-	//rc = SqlEngine::load("small","small.del", true);
+	rc = SqlEngine::load("xsmall","xsmall.del", false);
 	//rc = SqlEngine::load("small","small.del", true);
 	//rc = SqlEngine::load("medium","medium.del", true);
 	//rc = SqlEngine::load("large","large.del", true);
-	rc = SqlEngine::load("xlarge","xlarge.del", true);
+	//rc = SqlEngine::load("xlarge","xlarge.del", true);
 
 	//if(rc < 0)
 	//	printf("there is an error in LOAD\n");
 	
 	SelCond a;
 	a.attr = 1;
-	a.comp = SelCond::GT;
-	string a_value = "400";
+	a.comp = SelCond::LT;
+	string a_value = "2500";
 	a.value = (char*)a_value.c_str();
 
 	SelCond b;
@@ -43,11 +43,12 @@ int main(){
 	std::vector<SelCond> cond;
 	
 	cond.push_back(a);
-	cond.push_back(b);
-	cond.push_back(c);
-	cond.push_back(d);
+	//cond.push_back(b);
+	//cond.push_back(c);
+	//cond.push_back(d);
 
-	SqlEngine::select(3, "xlarge", cond);
+	//SqlEngine::select(3, "xlarge", cond);
+	SqlEngine::select(3, "xsmall", cond);
 	
 	return 0;
 }
