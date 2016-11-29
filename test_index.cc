@@ -10,8 +10,9 @@ int main(){
 
 	printf("welcome to test_index\n");
 	RecordId rid;
-	
-	rc = btIndex.open("xsmall.idx", 'r');
+
+	rc = btIndex.open("test_unsorted.idx", 'w');
+
 	if(rc < 0 ){
 		printf("failed to open the index file\n");
 		return rc;
@@ -21,13 +22,14 @@ int main(){
 	
 	RecordFile rf;
 	rc = rf.open("test_unsorted.tbl", 'r');
-	if(rc < 0)
+	if(rc < 0){
 		return rc;
+	}
 
 	rid.pid = (PageId) 0;
 	RecordId last = rf.endRid();
 	printf("last rid is %i, %i \n", last.pid, last.sid);
-	const int numInserts = 6;
+	const int numInserts = 8;
 	int key;
     string value;
 
@@ -63,8 +65,9 @@ int main(){
 			printf("entry %i is at pid: %i, eid: %i\n", searchkey, ic.pid, ic.eid);
 		}
 	}
+
 	
-	
+	/*
 	rc = btIndex.locate(searchkey, ic);
 	//int i = 0;
 	while(rc == 0){
@@ -72,7 +75,7 @@ int main(){
 		printf("rc is %i\n",rc );
 		printf("Key: %i, rid: {pid: %i, sid: %i}, ic for next position: {pid: %i, eid: %i}\n", searchkey, rid.pid, rid.sid, ic.pid, ic.eid);
 
-	}
+	}*/
 	//btIndex.printEntries();
 
 	btIndex.close();

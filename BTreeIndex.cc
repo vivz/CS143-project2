@@ -112,8 +112,9 @@ RC BTreeIndex::close()
     return pf.close();
 }
 
+
 RC BTreeIndex::printEntries(){
-	RC rc =printEntriesHelper(rootPid, 0);
+	RC rc =printEntriesHelper(rootPid, 1);
 	if(rc<0){
 		printf("Error in printEntries\n");
 		return rc;
@@ -268,8 +269,8 @@ RC BTreeIndex::insertNonLeaf(LeafEntry toInsert, PageId current_pid, int level, 
 	if(has_overflow && level!=treeHeight){
 		//need to overflow one level up
 
-		if(node.isFull()){
-		//if(node.getKeyCount()>=2){
+		//if(node.isFull()){
+		if(node.getKeyCount()>=2){
 			BTNonLeafNode sibling;
 			has_overflow = true;
 			int midKey = -1;
@@ -299,8 +300,8 @@ RC BTreeIndex::insertLeaf(LeafEntry LE, PageId leafId, NonLeafEntry& overflow, b
 	BTLeafNode leafNode;
 	leafNode.read(leafId, pf);
 
-	if(!leafNode.isFull()) {
-	//if(leafNode.getKeyCount() < 2) {
+	//if(!leafNode.isFull()) {
+	if(leafNode.getKeyCount() < 2) {
 		leafNode.insert(LE.key, LE.rid);
 		has_overflow = false;
 	}else{
@@ -405,8 +406,6 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 		return rc;
 	
 	RC rc2 = current.readEntry(cursor.eid, key, rid);
-	if(rc2 < 0)
-		return rc2;
 
 	if(cursor.eid + 1 < current.getKeyCount()){
 		cursor.eid += 1;
@@ -417,5 +416,7 @@ RC BTreeIndex::readForward(IndexCursor& cursor, int& key, RecordId& rid)
 	}
 	if(cursor.pid == 0)
 		return RC_INVALID_CURSOR;
+	if(rc2 < 0)
+		return rc2;
     return 0;
 }

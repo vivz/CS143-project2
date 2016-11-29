@@ -222,6 +222,8 @@ RC BTLeafNode::readEntry(int eid, int& key, RecordId& rid){
 		LeafEntry *ptrEntry = (LeafEntry*)(buffer + sizeof(int)) + eid;
 		key = ptrEntry->key;
 		rid = ptrEntry->rid;
+		if(eid == getKeyCount())
+			return RC_NO_SUCH_RECORD;
 		return 0;
 	}
 }
